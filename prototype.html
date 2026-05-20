@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOTS · 礼物推荐经验包</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #000000;
+      --fg: #ffffff;
+      --fg-muted: #8a8a8a;
+      --fg-dim: #555555;
+      --card-bg: #131313;
+      --card-border: #1f1f1f;
+      --device-frame: #1a1a1a;
+      --stepper-bg: rgba(28, 28, 28, 0.92);
+      --stepper-active-bg: #ffffff;
+      --stepper-active-fg: #0a0a0a;
+      --font-cn: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --font-en: 'Inter', 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-cn);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 80px;
+      padding: 60px 120px 140px;
+    }
+
+    .demo-pane {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* iPhone 边框：用 .iphone 当 overflow:hidden 屏幕容器，box-shadow 画机身边框 */
+    .iphone {
+      position: relative;
+      width: 430px;
+      height: 932px;
+      border-radius: 56px;
+      overflow: hidden;
+      background: #ffffff;
+      transform: scale(var(--phone-scale, 1));
+      transform-origin: center center;
+      box-shadow:
+        0 0 0 14px var(--device-frame),   /* 内层：黑色机身 */
+        0 0 0 16px #2a2a2a,                /* 外层：高光描边 */
+        0 40px 80px rgba(0, 0, 0, 0.6);    /* 投影 */
+    }
+    /* iframe 比屏幕大 80px 高，向上偏移 -40px，让 demo 的 .device { margin: 40px auto } 自然被 .iphone 裁掉 */
+    .iphone-iframe {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      width: 430px;
+      height: 1012px;
+      border: 0;
+      display: block;
+      background: transparent;
+    }
+    .iphone-notch {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 32px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .spec-pane {
+      max-width: 560px;
+      padding-right: 20px;
+    }
+    .spec-step {
+      font-family: var(--font-en);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      color: var(--fg-muted);
+      margin-bottom: 28px;
+    }
+    .spec-title {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+    .spec-subtitle {
+      font-size: 15px;
+      color: var(--fg-muted);
+      margin-bottom: 40px;
+      letter-spacing: 0.02em;
+    }
+    .spec-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .spec-card {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: start;
+      gap: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 22px 26px;
+      transition: background 0.2s ease;
+    }
+    .spec-card:hover { background: #181818; }
+    .spec-card-num {
+      font-family: var(--font-en);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      padding-top: 2px;
+    }
+    .spec-card-body h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+    }
+    .spec-card-body p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--fg-muted);
+    }
+
+    .stepper {
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      background: var(--stepper-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid #2a2a2a;
+      border-radius: 999px;
+      z-index: 100;
+    }
+    .step-tab {
+      font-family: var(--font-cn);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      padding: 10px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: 0;
+      background: transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .step-tab:hover { color: var(--fg); }
+    .step-tab.active {
+      background: var(--stepper-active-bg);
+      color: var(--stepper-active-fg);
+      font-weight: 600;
+    }
+    .step-tab .num {
+      display: inline-block;
+      margin-right: 4px;
+      font-family: var(--font-en);
+    }
+
+    .watermark {
+      position: fixed;
+      right: 32px;
+      bottom: 38px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--fg-dim);
+      z-index: 50;
+    }
+
+    @media (max-width: 1280px) {
+      .stage { padding: 40px 60px 140px; gap: 48px; }
+      .spec-title { font-size: 44px; }
+    }
+    @media (max-width: 980px) {
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+        padding: 40px 24px 160px;
+      }
+      .spec-title { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="demo-pane">
+      <div class="iphone">
+        <iframe class="iphone-iframe" title="DOTS gift recommender demo" loading="lazy"></iframe>
+        <div class="iphone-notch"></div>
+      </div>
+    </section>
+
+    <section class="spec-pane">
+      <div class="spec-step">STEP 01</div>
+      <h1 class="spec-title">召唤经验包</h1>
+      <p class="spec-subtitle">从一句话开始，挑出 TA 真正想要的礼物</p>
+      <div class="spec-cards">
+        <div class="spec-card">
+          <div class="spec-card-num">01</div>
+          <div class="spec-card-body"><h3>—</h3><p>—</p></div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-num">02</div>
+          <div class="spec-card-body"><h3>—</h3><p>—</p></div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-num">03</div>
+          <div class="spec-card-body"><h3>—</h3><p>—</p></div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-num">04</div>
+          <div class="spec-card-body"><h3>—</h3><p>—</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="stepper" role="tablist" aria-label="原型步骤">
+    <button class="step-tab active" data-step="1" role="tab" aria-selected="true"><span class="num">①</span>召唤经验包</button>
+    <button class="step-tab" data-step="2" role="tab"><span class="num">②</span>收集 TA 信息</button>
+    <button class="step-tab" data-step="3" role="tab"><span class="num">③</span>画像 + 礼物卡</button>
+    <button class="step-tab" data-step="4" role="tab"><span class="num">④</span>完整送礼方案</button>
+  </nav>
+
+  <div class="watermark">DOTS · 礼物推荐经验包 · 原型说明</div>
+
+  <script>
+    const DEMO_BASE = 'dots-starter/assets/index.html';
+
+    const STEPS = [
+      {
+        demoUrl: `${DEMO_BASE}#stage=0`,
+        title: '召唤经验包',
+        subtitle: '从「帮我给男朋友挑生日礼物」开始，AI 主动接入懂行的人',
+        cards: [
+          { title: '从场景化推荐词起手', desc: '阶段 0 给出 3 条贴近真实场景的推荐词，降低用户冷启成本，让对话从「我不知道送什么」开始。' },
+          { title: 'AI 主动接入经验包', desc: '系统识别难题后，自动召唤「@闺蜜小礼」经验包，把"懂行的人"作为可调用能力，而不是新菜单。' },
+          { title: '经验包卡可视化', desc: '头像 + 昵称 + 粉丝数 + 兴趣标签，让用户清楚看到「我接入的是谁，TA 凭什么懂」。' },
+          { title: '一键使用进入流程', desc: '"使用"按钮接入后，AI 立刻预告下一步会做什么——翻 TA 的小红书主页 + 调用送礼经验包给出 SKU 级推荐。' },
+        ],
+      },
+      {
+        demoUrl: `${DEMO_BASE}#stage=3`,
+        title: '收集 TA 信息',
+        subtitle: '关系 / 预算 / 场景三组 chip，外加可选主页链接',
+        cards: [
+          { title: '极简表单 + 默认值', desc: '关系 / 预算 / 场景 三组 chip 单选，预填合理默认值，确认按钮立刻可用，避免用户在表单里卡壳。' },
+          { title: '主页链接选填', desc: '小红书主页是「锦上添花」字段，不强制填写，但填了能拿到笔记级证据链，让推荐更扎实。' },
+          { title: '空主页兜底引导', desc: '若用户没填主页，AI 会追问：用一两句话聊聊 TA 是个怎样的人吧——性格 / 爱好 / 职业 / 星座 / MBTI 都能用。' },
+          { title: '原生输入栏接住描述', desc: '兜底分支下，底部输入栏 placeholder 自动切换为「聊聊 TA 是个怎样的人…」，回车直接提交，无需新出弹窗。' },
+        ],
+      },
+      {
+        demoUrl: `${DEMO_BASE}#stage=4`,
+        title: '画像 + 礼物卡',
+        subtitle: '先呈现 TA 的画像与兴趣信号，再给 5 件 SKU 级礼物',
+        cards: [
+          { title: '画像卡 + 兴趣信号气泡', desc: '上半部分头像 + 主副标题描述身份；下半部分气泡列出 4 条「行为 ➡️ 选品方向」的推导式 insight。' },
+          { title: '5 张 SKU 级商品卡', desc: '每张卡含商品图、品牌系列型号、价格、戳痛点的一句话定位；点击卡片打开详情面板查看推荐理由 + 用户口碑。' },
+          { title: '详情面板 + 选定态', desc: '面板内有推荐理由（含 TA 的笔记原文引用）、2-3 条小红书用户口碑 quotes、「就选这个」CTA；选定后卡片高亮 + 大图打勾。' },
+          { title: '两条决策分岔', desc: '看完后给出 2 条联想问题：①「选好了，给我一个完整送礼方案」直进阶段 4；②「拿不准，去问问大家」拉起小红书发布笔记浮层。' },
+        ],
+      },
+      {
+        demoUrl: `${DEMO_BASE}#stage=5`,
+        title: '完整送礼方案',
+        subtitle: '主礼物 + 包装 + 配套 + 贺卡 + 时机，一气呵成',
+        cards: [
+          { title: '为选定礼物量身定方案', desc: '基于上一步用户「就选这个」的主礼物，给出主礼物链接、包装色调、配套小物、贺卡文案、送礼时机的完整组合。' },
+          { title: '贺卡引用 TA 的具体场景', desc: '不是泛泛的祝福语，而是「我注意到你在 xxx」式的真心话，让礼物之外的仪式感同样到位。' },
+          { title: '社区征求意见兜底', desc: '若用户拿不准，可一键拉起小红书发布笔记浮层，自动生成封面 + 文案 + 话题，把决策外包给 5000 万送礼达人。' },
+          { title: '收下经验包，下次复用', desc: '末尾不再罗列追问 chip，而是用「收下经验包」按钮把这次能力沉淀进用户工具箱，下次同类需求一键召唤。' },
+        ],
+      },
+    ];
+
+    const tabs = document.querySelectorAll('.step-tab');
+    const iframe = document.querySelector('.iphone-iframe');
+    const stepLabel = document.querySelector('.spec-step');
+    const titleEl = document.querySelector('.spec-title');
+    const subtitleEl = document.querySelector('.spec-subtitle');
+    const cardEls = document.querySelectorAll('.spec-card');
+
+    function applyStep(index) {
+      const step = STEPS[index];
+      if (!step) return;
+      iframe.src = step.demoUrl;
+      stepLabel.textContent = `STEP 0${index + 1}`;
+      titleEl.textContent = step.title;
+      subtitleEl.textContent = step.subtitle;
+      step.cards.forEach((card, i) => {
+        const el = cardEls[i];
+        if (!el) return;
+        el.querySelector('h3').textContent = card.title;
+        el.querySelector('p').textContent = card.desc;
+      });
+    }
+
+    // iframe 加载后注入 override：让 .device 完全填满 iframe（撤销 margin / scale / radius）
+    iframe.addEventListener('load', () => {
+      try {
+        const doc = iframe.contentDocument;
+        if (!doc) return;
+        // 1) 先把 demo 自己设置的 --phone-scale 干掉
+        doc.documentElement.style.setProperty('--phone-scale', '1');
+        // 2) 注入 override CSS
+        const style = doc.createElement('style');
+        style.textContent = `
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+          }
+          .device {
+            margin: 0 !important;
+            transform: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+        `;
+        doc.head.appendChild(style);
+      } catch (_) { /* 同源 iframe 才能注入；本地文件协议下应可访问 */ }
+    });
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => {
+          t.classList.remove('active');
+          t.removeAttribute('aria-selected');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        const idx = parseInt(tab.dataset.step, 10) - 1;
+        applyStep(idx);
+      });
+    });
+
+    // 初始呈现 STEP 01
+    applyStep(0);
+
+    // iPhone 整体（含 box-shadow 边框 16px×2）按 demo-pane 实际空间 scale
+    function scalePhone() {
+      const pane = document.querySelector('.demo-pane');
+      if (!pane) return;
+      const PHONE_W = 430 + 32;   // 屏幕宽 + 边框 16×2
+      const PHONE_H = 932 + 32;   // 屏幕高 + 边框 16×2
+      const pw = pane.clientWidth;
+      const ph = pane.clientHeight;
+      const scale = Math.min(1, pw / PHONE_W, ph / PHONE_H);
+      document.documentElement.style.setProperty('--phone-scale', scale);
+    }
+    scalePhone();
+    window.addEventListener('resize', scalePhone);
+  </script>
+</body>
+</html>

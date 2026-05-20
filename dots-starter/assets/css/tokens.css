@@ -1,0 +1,128 @@
+/* ============================================================
+   点点 · Dots Design Tokens
+   所有设计变量集中定义，对应 Figma Dots-Tokens 色板
+   ============================================================ */
+
+:root {
+  /* ========== 背景 Backgrounds ========== */
+  --bg:    #F3F3F3;     /* 页面底色 */
+  --chat-bg: #F5F5F5;   /* 对话界面底色 */
+  --bg1:   #F7F7F7;     /* 工具栏/输入栏 */
+  --bg2:   #FAFAFA;     /* 键盘升起背景 */
+  --bg3:   #FFFFFF;     /* 弹窗/面板 */
+
+  /* ========== 遮罩 Masks ========== */
+  --mask-bg1: rgba(0,0,0,.2);
+  --mask-bg2: rgba(0,0,0,.4);
+
+  /* ========== 填充 Fills ========== */
+  --fill1: rgba(255,255,255,.05);
+  --fill2: rgba(255,255,255,.1);
+  --fill3: rgba(255,255,255,.2);
+  --fill4: rgba(255,255,255,.5);
+  --fill5: rgba(255,255,255,.8);   /* AI 卡片/富文本背景 */
+  --fillA: #FFFFFF;                /* AI 气泡/输入框 */
+  --fillB: #E6E6E6;                /* 用户气泡 */
+  --fillC: rgba(50,50,50,.92);     /* 深色填充 */
+
+  /* ========== 反色填充 Inverted Fills ========== */
+  --inv-fill1: rgba(50,50,50,.05);
+  --inv-fill2: rgba(50,50,50,.1);
+  --inv-fill3: rgba(50,50,50,.2);
+  --inv-fill4: rgba(50,50,50,.5);
+  --inv-fill5: rgba(50,50,50,.8);
+
+  /* ========== 文字 Labels (基色 #141414) ========== */
+  --title:       #141414;              /* 100% — 标题/关键信息 */
+  --paragraph:   rgba(20,20,20,.8);    /* 80%  — 段落/副标题 */
+  --description: rgba(20,20,20,.6);    /* 60%  — 描述/辅助 */
+  --desc-lighter:rgba(20,20,20,.4);    /* 40%  — 更轻提示 */
+  --placeholder: rgba(20,20,20,.16);   /* 16%  — 占位文字 */
+  --disabled:    rgba(20,20,20,.09);   /* 9%   — 禁用态 */
+
+  /* ========== 链接 ========== */
+  --link: #0D4087;
+
+  /* ========== 分割线 Separators ========== */
+  --separator:  rgba(255,255,255,.75); /* 气泡内分割 */
+  --separator2: rgba(20,20,20,.08);    /* 通用分割线 */
+  --separator3: rgba(20,20,20,.10);    /* 输入框边框 */
+  --separator4: rgba(20,20,20,.12);
+
+  /* ========== 品牌色 Primary ========== */
+  --info5: #6FD2BD;                    /* 点点品牌绿 */
+  --brand: rgba(79,207,188,.95);       /* 品牌绿 95% */
+
+  /* ========== 阴影 Shadows ========== */
+  --shadow1: 0 4px 10px rgba(20,20,20,.04);
+  --shadow2: 0 4px 16px rgba(20,20,20,.12);
+  --shadow3: 0 8px 30px rgba(20,20,20,.18);
+
+  /* ========== 圆角 Radius ========== */
+  --radius-device:    54px;    /* 设备外框 */
+  --radius-card:      36px;    /* 富文本卡片 */
+  --radius-bubble:    22px;    /* 气泡/内容卡 */
+  --radius-input:     16px;    /* 输入框 */
+  --radius-tag:       12px;    /* 标签 */
+  --radius-inner:     8px;     /* 卡片内部元素 */
+  --radius-button:    24px;    /* 按钮 */
+  --radius-input-bar: 28px;    /* 输入栏容器 */
+
+  /* ========== 间距 Spacing ========== */
+  --space-l1: 32px;    /* 一级模块间距 */
+  --space-l2: 22px;    /* 二级模块间距 */
+  --space-l3: 16px;    /* 三级内容间距 */
+  --space-l4: 8px;     /* 行内元素间距 */
+  --msg-gap:  20px;    /* 消息间距 */
+  --msg-pad-h: 12px;   /* 对话流左右 padding */
+
+  /* ========== iOS 安全区 ========== */
+  --safe-top:    59px;  /* 刘海屏状态栏 */
+  --safe-bottom: 34px;  /* 底部安全区 */
+  --nav-height:  44px;  /* 导航栏高度 */
+
+  /* ========== 字体 ========== */
+  --font: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --line-height: 1.69;
+  --letter-spacing: 0.06em;
+}
+
+/* ========== 暗色模式 ========== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:    #1A1A1A;
+    --bg1:   #242424;
+    --bg2:   #2C2C2C;
+    --bg3:   #363636;
+
+    --fill1: rgba(255,255,255,.05);
+    --fill2: rgba(255,255,255,.08);
+    --fill3: rgba(255,255,255,.12);
+    --fill4: rgba(255,255,255,.2);
+    --fill5: rgba(255,255,255,.08);
+    --fillA: #2C2C2C;
+    --fillB: #3A3A3A;
+    --fillC: rgba(255,255,255,.92);
+
+    --inv-fill1: rgba(255,255,255,.05);
+    --inv-fill2: rgba(255,255,255,.08);
+
+    --title:       #FFFFFF;
+    --paragraph:   rgba(255,255,255,.8);
+    --description: rgba(255,255,255,.6);
+    --desc-lighter:rgba(255,255,255,.4);
+    --placeholder: rgba(255,255,255,.16);
+    --disabled:    rgba(255,255,255,.09);
+
+    --link: #6EB4FF;
+
+    --separator:  rgba(255,255,255,.12);
+    --separator2: rgba(255,255,255,.08);
+    --separator3: rgba(255,255,255,.10);
+    --separator4: rgba(255,255,255,.12);
+
+    --shadow1: 0 4px 10px rgba(0,0,0,.2);
+    --shadow2: 0 4px 16px rgba(0,0,0,.3);
+    --shadow3: 0 8px 30px rgba(0,0,0,.4);
+  }
+}

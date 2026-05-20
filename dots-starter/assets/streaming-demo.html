@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>富文本流式输出 — 效果预览</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/app-shell.css">
+<style>
+/* ── Demo 页面样式 ── */
+body {
+  background: #E8E8E8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 60px;
+}
+.demo-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.demo-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1A1A1A;
+  margin-bottom: 4px;
+}
+.demo-sub {
+  font-size: 13px;
+  color: #888;
+}
+.demo-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.demo-btn:active { transform: scale(.96); }
+.demo-btn-play { background: #6FD2BD; color: #fff; }
+.demo-btn-play:hover { background: #5CC5AE; }
+.demo-btn-reset { background: transparent; color: #555; border: 1px solid #D8D8D8; }
+.demo-btn-reset:hover { background: #F0F0F0; }
+
+.device { margin: 0 auto; }
+
+/* ── 用户气泡 ── */
+.msg-row { margin-bottom: 20px; padding: 0; }
+.msg-row.has-tail { margin-bottom: 26px; }
+.msg-user { display: flex; justify-content: flex-end; }
+.msg-user-bubble {
+  position: relative;
+  width: fit-content;
+  max-width: 346px;
+  padding: 12px 20px;
+  background: #EBEBEB;
+  border: .5px solid #DEDEDE;
+  border-radius: 22px;
+  color: #0A0A0A;
+  font-size: 16px;
+  line-height: 1.69em;
+  letter-spacing: 0.06em;
+  overflow-wrap: break-word;
+}
+.msg-user-bubble .bubble-tail {
+  position: absolute;
+  right: -1px;
+  bottom: -11px;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  display: block;
+}
+
+/* ── AI 富文本卡片 ── */
+.ai-card {
+  width: 100%;
+  max-width: 406px;
+  background: rgba(255,255,255,.80);
+  border-radius: 36px;
+  border: .5px solid rgba(162,162,162,.24);
+  box-shadow: 0 4px 10px rgba(20,20,20,.04);
+  position: relative;
+  /* overflow 由 JS 控制 */
+}
+.ai-card-body {
+  padding: 28px 24px;
+  color: #0A0A0A;
+  font-size: 16px;
+  line-height: 1.69em;
+  letter-spacing: 0.06em;
+}
+/* 富文本排版 */
+.ai-card-body h2 {
+  font-size: 18px; line-height: 1.7; font-weight: 600;
+  margin-bottom: 22px;
+}
+.ai-card-body h3 {
+  font-size: 17px; line-height: 1.7; font-weight: 600;
+  margin-bottom: 16px;
+}
+.ai-card-body h4 {
+  font-size: 16px; line-height: 1.7; font-weight: 600;
+  margin-bottom: 16px;
+}
+.ai-card-body p {
+  font-size: 16px; line-height: 1.7; letter-spacing: 0.06em;
+  color: var(--paragraph);
+  margin-bottom: 16px;
+}
+.ai-card-body p:last-child { margin-bottom: 0; }
+.ai-card-body ul {
+  padding-left: 14px;
+  margin-bottom: 16px;
+}
+.ai-card-body ul li {
+  font-size: 16px; line-height: 1.7; letter-spacing: 0.06em;
+  color: var(--paragraph);
+  margin-bottom: 4px;
+}
+.ai-card-body blockquote {
+  border-left: 3px solid var(--info5);
+  padding-left: 14px;
+  margin: 0 0 16px;
+  color: var(--description);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.ai-card-body hr {
+  border: none;
+  height: 0.5px;
+  background: rgba(20,20,20,.08);
+  margin: 22px 0;
+}
+.ai-card-body strong { font-weight: 600; color: var(--title); }
+
+/* ── 流式动画 ── */
+#cardMask {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 36px; /* 与卡片一致，防止蒙版溢出圆角 */
+}
+/* 流式状态下，每个子元素初始透明 */
+.ai-card.streaming .ai-card-body > * {
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+.ai-card.streaming .ai-card-body > *.revealed {
+  opacity: 1;
+}
+/* ul 内部的 li 单独控制 */
+.ai-card.streaming .ai-card-body > ul > li {
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+.ai-card.streaming .ai-card-body > ul > li.revealed {
+  opacity: 1;
+}
+</style>
+<script>
+// .device 容器 scale 自适应
+(function(){
+  var W=430, H=932, PAD=72;
+  function set(){
+    if(window.innerWidth<=460){document.documentElement.style.removeProperty('--phone-scale');return;}
+    var s=Math.min(1,(window.innerHeight-PAD-120)/H,(window.innerWidth-PAD)/W);
+    document.documentElement.style.setProperty('--phone-scale',s);
+  }
+  set();
+  window.addEventListener('resize',set);
+})();
+</script>
+</head>
+<body>
+
+<div class="demo-header">
+  <div class="demo-title">富文本流式输出效果预览</div>
+  <div class="demo-sub">AI 富文本卡片 · 渐变蒙版揭示动画 · 基于 Canvas</div>
+</div>
+<div class="demo-controls">
+  <button class="demo-btn demo-btn-play" onclick="go()">▶ 播放</button>
+  <button class="demo-btn demo-btn-reset" onclick="stop()">↺ 重置</button>
+</div>
+
+<div class="device">
+
+  <div class="top-gradient-mask"></div>
+
+  <div class="status-bar">
+    <img src="img/status-bar.png" alt="status bar">
+  </div>
+
+  <div class="nav-header">
+    <div class="nav-avatar-btn">
+      <img class="nav-avatar" src="img/avatar-shaped.png" alt="头像">
+    </div>
+  </div>
+
+  <div id="content-area">
+
+    <!-- 用户气泡 -->
+    <div class="msg-row msg-user has-tail">
+      <div class="msg-user-bubble">
+        帮我做一个大理两天旅行攻略 ✈️
+        <img class="bubble-tail" src="img/tail-right.png" alt="" draggable="false">
+      </div>
+    </div>
+
+    <!-- AI 富文本卡片（流式输出目标） -->
+    <div class="ai-card" id="aiCard">
+      <div class="ai-card-body" id="cardBody">
+        <h2>🏔️ 大理两日深度游攻略</h2>
+
+        <h3>Day 1：古城漫步，感受慢生活</h3>
+
+        <p>第一天抵达大理后，直接前往古城内的客栈安顿下来。下午的时光最适合在客栈的庭院里，泡一壶茶，静静地发呆，让旅途的疲惫慢慢消散。</p>
+
+        <p>傍晚时分，沿着古城的石板路慢慢走，在人民路找一家有天台的小店，点杯当地啤酒，看苍山的日落把天空染成粉紫色。晚上回客栈的路上买一袋洗好的水果，坐在庭院里吃，听虫鸣入睡。</p>
+
+        <hr>
+
+        <h3>Day 2：环海骑行，遇见洱海的每一面</h3>
+
+        <p>第二天早起，趁着游客还没醒，骑车去洱海边。环海西路上有很多安静的咖啡馆，挑一家坐下来，点杯手冲，对着洱海发呆一整个上午。</p>
+
+        <h4>推荐路线</h4>
+        <ul>
+          <li>上午：环海西路 → 喜洲古镇（吃破酥粑粑）</li>
+          <li>下午：海舌公园（拍照圣地）→ 双廊古镇</li>
+          <li>傍晚：返回古城，找一家云南菜馆</li>
+        </ul>
+
+        <p>中午去喜洲古镇，尝尝当地的破酥粑粑和乳扇，逛逛白族民居的照壁。下午如果有精力，去海舌公园走走，那里有成片的树林伸入洱海，非常适合拍照。</p>
+
+        <blockquote>大理的美不在于打卡了多少景点，而在于你愿意给自己多少时间去感受慢下来的生活。这里的阳光有一种特别的治愈力，只是晒着太阳，吹着从洱海飘来的风，就已经是最好的旅行了。</blockquote>
+      </div>
+      <canvas id="cardMask"></canvas>
+    </div>
+
+  </div>
+
+  <!-- 底部输入栏 -->
+  <div class="dd-input-bar">
+    <button class="dd-input-side-btn" aria-label="更多">
+      <img src="img/add_circle.png" alt="" draggable="false">
+    </button>
+    <div class="dd-input-content">
+      <div class="dd-input-text-area">
+        <input type="text" class="dd-input-field" placeholder="给点点发消息...">
+      </div>
+    </div>
+    <button class="dd-input-side-btn" aria-label="语音输入">
+      <img src="img/chat_bottom_voice.png" alt="" draggable="false">
+    </button>
+  </div>
+
+  <div class="dd-bottom-safe">
+    <div class="dd-watermark">内容由 AI 生成</div>
+    <div class="dd-home-indicator-bar"></div>
+  </div>
+
+</div>
+
+<script>
+/*
+ * ══════════════════════════════════════════════════════════════
+ *  富文本卡片 · 流式输出动效
+ * ══════════════════════════════════════════════════════════════
+ *
+ *  核心思路（改编自 streaming-B-span.html）：
+ *
+ *  原版：span 追加纯文本 + Canvas 白色蒙版逐步下移
+ *  本版：富文本 block 元素（h2/h3/p/li/blockquote）逐个揭示
+ *        + Canvas 渐变蒙版平滑追赶
+ *        + 卡片高度 lerp 生长
+ *        + 聊天区自动滚动
+ *
+ *  结构：
+ *  ┌─── .ai-card (卡片容器，overflow:hidden，高度动画) ──────┐
+ *  │  ┌── .ai-card-body (富文本层) ────────────────────────┐ │
+ *  │  │  <h2> 标题 (opacity 0→1) </h2>                     │ │
+ *  │  │  <h3> 小标题 (opacity 0→1) </h3>                   │ │
+ *  │  │  <p> 段落 (opacity 0→1) </p>                       │ │
+ *  │  │  <ul><li>(opacity 0→1)</li>...</ul>                 │ │
+ *  │  │  ...                                                │ │
+ *  │  └─────────────────────────────────────────────────────┘ │
+ *  │  ┌── #cardMask (Canvas 蒙版，position:absolute) ─────┐ │
+ *  │  │  [透明区] ← 文字已可见                               │ │
+ *  │  │  [渐变带] ← 3行高，上透明→下白色                     │ │
+ *  │  │  [纯白区] ← 文字不可见                               │ │
+ *  │  └─────────────────────────────────────────────────────┘ │
+ *  └─────────────────────────────────────────────────────────┘
+ */
+
+var running = false, rafId = null, blockTimer = null;
+
+/* ── 收集所有需要揭示的原子元素 ── */
+function collectAtoms(container) {
+  var atoms = [];
+  var children = container.children;
+  for (var i = 0; i < children.length; i++) {
+    var el = children[i];
+    var tag = el.tagName;
+    if (tag === 'UL' || tag === 'OL') {
+      // 列表容器本身也要揭示（占位），然后逐个 li
+      atoms.push({ el: el, type: 'list-container' });
+      var lis = el.querySelectorAll('li');
+      for (var j = 0; j < lis.length; j++) {
+        atoms.push({ el: lis[j], type: 'li' });
+      }
+    } else {
+      atoms.push({ el: el, type: tag.toLowerCase() });
+    }
+  }
+  return atoms;
+}
+
+/* ── 根据元素类型决定间隔（模拟流式到达节奏） ── */
+function getDelay(atom) {
+  switch (atom.type) {
+    case 'h2':             return 350;  // 大标题，稍快
+    case 'h3': case 'h4':  return 400;  // 小标题
+    case 'p':              return 550;  // 段落，内容多，给更多时间
+    case 'blockquote':     return 600;  // 引用块
+    case 'list-container': return 100;  // 列表容器几乎立即
+    case 'li':             return 300;  // 每个列表项
+    case 'hr':             return 200;  // 分割线，快速
+    default:               return 400;
+  }
+}
+
+/* ── 停止/重置 ── */
+function stop() {
+  running = false;
+  clearTimeout(blockTimer);
+  cancelAnimationFrame(rafId);
+
+  var card = document.getElementById('aiCard');
+  var body = document.getElementById('cardBody');
+  var cvs  = document.getElementById('cardMask');
+
+  // 去掉 streaming 类 → 所有子元素恢复可见
+  card.classList.remove('streaming');
+  card.style.height = '';
+  card.style.overflow = '';
+
+  // 清除 revealed 类
+  var all = body.querySelectorAll('.revealed');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('revealed');
+
+  // 清 Canvas
+  cvs.width = 0; cvs.height = 0;
+  cvs.style.opacity = '1';
+  cvs.style.transition = 'none';
+
+  // 重置滚动
+  document.getElementById('content-area').scrollTop = 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+ *  主函数 go()
+ * ══════════════════════════════════════════════════════════════ */
+function go() {
+  stop();
+  running = true;
+
+  var card    = document.getElementById('aiCard');
+  var body    = document.getElementById('cardBody');
+  var cvs     = document.getElementById('cardMask');
+  var ctx     = cvs.getContext('2d');
+  var content = document.getElementById('content-area');
+
+  /* ── 布局常量 ── */
+  var CARD_W = card.offsetWidth || 406;
+  var LH     = 27;   // 行高 ~1.69em × 16px
+  var PAD_T  = 28;   // ai-card-body padding-top
+  var PAD_B  = 28;   // ai-card-body padding-bottom
+
+  /* ── 进入流式状态 ── */
+  card.classList.add('streaming');
+  card.style.overflow = 'hidden';
+  card.style.height = '80px';  // 初始高度
+
+  /* ── 预分配 Canvas ── */
+  var maxCvsH = 2000;
+  cvs.width  = CARD_W;
+  cvs.height = maxCvsH;
+  cvs.style.width  = CARD_W + 'px';
+  cvs.style.height = maxCvsH + 'px';
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, CARD_W, maxCvsH);
+
+  /* ── 预计算 2D 渐变蒙版（离屏 Canvas） ──
+   *  尺寸: CARD_W × fadeH
+   *  纵向 72% + 横向 28%，非线性曲线
+   */
+  var FADE_LINES = 3;
+  var fadeH = FADE_LINES * LH;  // = 81px
+  var PAD_L = 24;               // 文字区左 padding
+  var TEXT_W = CARD_W - 48;     // 文字区宽度
+
+  var fadeOff = document.createElement('canvas');
+  fadeOff.width  = CARD_W;
+  fadeOff.height = fadeH;
+  var fCtx = fadeOff.getContext('2d');
+  var imgData = fCtx.createImageData(CARD_W, fadeH);
+  var dd = imgData.data;
+  for (var py = 0; py < fadeH; py++) {
+    var yN = py / fadeH;
+    for (var px = 0; px < CARD_W; px++) {
+      var xN = Math.max(0, Math.min(1, (px - PAD_L) / TEXT_W));
+      var a = Math.pow(yN, 0.7) * 0.72 + Math.pow(xN, 0.8) * 0.28;
+      a = Math.min(1, a);
+      var idx4 = (py * CARD_W + px) * 4;
+      dd[idx4]   = 255;
+      dd[idx4+1] = 255;
+      dd[idx4+2] = 255;
+      dd[idx4+3] = Math.round(a * 255);
+    }
+  }
+  fCtx.putImageData(imgData, 0, 0);
+
+  /* ── 收集原子元素 & 构建揭示序列 ── */
+  var atoms = collectAtoms(body);
+  var currentIdx  = 0;
+  var smoothY     = PAD_T;
+  var displayH    = 80;
+  var lastTs      = 0;
+  var allRevealed = false;
+
+  /* ── 获取元素底部 y 坐标（相对卡片顶部） ── */
+  function getBottom(idx) {
+    if (idx < 0 || idx >= atoms.length) return PAD_T;
+    var el = atoms[idx].el;
+    // el.offsetTop 相对 offsetParent（.ai-card，因为它有 position:relative）
+    // 已经包含了 cardBody 的 padding-top，不需要再加
+    return el.offsetTop + el.offsetHeight;
+  }
+
+  /* ── 定时揭示下一个原子 ── */
+  function revealNext() {
+    if (!running || currentIdx >= atoms.length) {
+      allRevealed = true;
+      return;
+    }
+    var atom = atoms[currentIdx];
+    atom.el.classList.add('revealed');
+
+    // 如果是 list-container，同时让 UL 本身也可见（但 li 还不可见）
+    if (atom.type === 'list-container') {
+      atom.el.classList.add('revealed');
+    }
+
+    currentIdx++;
+    if (currentIdx < atoms.length) {
+      blockTimer = setTimeout(revealNext, getDelay(atoms[currentIdx - 1]));
+    } else {
+      allRevealed = true;
+    }
+  }
+
+  // 首个元素在 300ms 后开始
+  blockTimer = setTimeout(revealNext, 300);
+
+  /* ── 动画帧循环 ──
+   *  帧率无关 lerp: α = 1 − pow(1−k, dt×60)
+   */
+  function frame(ts) {
+    if (!running) return;
+    if (!lastTs) lastTs = ts;
+    var dt = Math.min((ts - lastTs) / 1000, 0.08);
+    lastTs = ts;
+
+    /* 1. 蒙版位置：smoothY 追赶 targetY */
+    var targetY = currentIdx > 0 ? getBottom(currentIdx - 1) : PAD_T;
+    var alpha = 1 - Math.pow(0.93, dt * 60);  // k=0.07/帧
+    smoothY += (targetY - smoothY) * alpha;
+
+    /* 2. 卡片高度：lerp 追赶 */
+    var naturalH = body.scrollHeight;
+    var targetH  = Math.min(naturalH, smoothY + fadeH + PAD_B);
+    if (allRevealed && Math.abs(targetY - smoothY) < 2) targetH = naturalH;
+    var hAlpha = 1 - Math.pow(0.94, dt * 60);  // k=0.06/帧
+    displayH += (targetH - displayH) * hAlpha;
+    // 保护：卡片底部 ≥ 实际内容底 + 底部留白
+    // 用 targetY（实际内容底部）而非 smoothY（lerp 延迟值），避免新块出现时高度不足
+    var minH = targetY + PAD_B;
+    if (displayH < minH) displayH = minH;
+    card.style.height = Math.ceil(displayH) + 'px';
+
+    /* 3. 画蒙版 */
+    ctx.clearRect(0, 0, CARD_W, maxCvsH);
+    if (!allRevealed || targetY - smoothY > 0.5) {
+      // 渐变带
+      ctx.drawImage(fadeOff, 0, Math.round(smoothY));
+      // 渐变带以下填白
+      var belowY = Math.round(smoothY) + fadeH;
+      if (belowY < maxCvsH) {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, belowY, CARD_W, maxCvsH - belowY);
+      }
+    }
+
+    /* 4. 聊天区自动滚动 */
+    var chatGoal = content.scrollHeight - content.clientHeight;
+    if (chatGoal > 0) {
+      var sAlpha = 1 - Math.pow(0.90, dt * 60);  // k=0.10/帧
+      content.scrollTop += (chatGoal - content.scrollTop) * sAlpha;
+    }
+
+    /* 5. 完成判断：蒙版淡出 */
+    if (allRevealed && Math.abs(targetY - smoothY) < 1 && Math.abs(displayH - naturalH) < 2) {
+      cvs.style.transition = 'opacity .4s';
+      cvs.style.opacity = '0';
+      setTimeout(function() {
+        card.style.height = 'auto';
+        card.style.overflow = '';
+        card.classList.remove('streaming');
+      }, 420);
+      return;
+    }
+
+    rafId = requestAnimationFrame(frame);
+  }
+  rafId = requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

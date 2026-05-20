@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>点点 · 礼物推荐经验包 demo</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="css/content.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script>
+  (function(){
+    var W=430, H=932, PAD=72;
+    function set(){
+      if(window.innerWidth<=460){document.documentElement.style.removeProperty('--phone-scale');return;}
+      var s=Math.min(1,(window.innerHeight-PAD)/H,(window.innerWidth-PAD)/W);
+      document.documentElement.style.setProperty('--phone-scale',s);
+    }
+    set();
+    window.addEventListener('resize',set);
+  })();
+  </script>
+</head>
+<body>
+
+<div class="device">
+
+  <div class="top-gradient-mask"></div>
+
+  <div class="status-bar">
+    <img src="img/status-bar.png" alt="status bar">
+  </div>
+
+  <div class="nav-header">
+    <div class="nav-avatar-btn">
+      <img class="nav-avatar" src="img/avatar-shaped.png" alt="头像">
+    </div>
+  </div>
+
+  <div id="content-area">
+
+    <!-- ═══════════════ 阶段 0：初始引导 ═══════════════ -->
+    <div class="stage" data-stage="0">
+      <div class="msg-row msg-ai has-tail stage-block">
+        <div class="msg-ai-bubble">
+          你好呀！我是点点。挑礼物纠结的时候，可以让我帮你接入懂行的人～
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="keyword-list stage-block">
+        <div class="kw-item">
+          <span class="kw-text">帮我给男朋友挑生日礼物</span>
+          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+        </div>
+        <div class="kw-item">
+          <span class="kw-text">想给闺蜜挑个生日礼物</span>
+          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+        </div>
+        <div class="kw-item">
+          <span class="kw-text">想送家人保健类礼物</span>
+          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 阶段 1：召唤经验包 ═══════════════ -->
+    <div class="stage" data-stage="1">
+      <div class="msg-row msg-user has-tail stage-block">
+        <div class="msg-user-bubble">
+          帮我给男朋友挑生日礼物
+          <img class="bubble-tail" src="img/tail-right.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="msg-row msg-ai has-tail stage-block">
+        <div class="msg-ai-bubble">
+          送男朋友的生日礼物挺难挑的——既要懂 TA 的兴趣，又要兼顾日常实用。我帮你接入 <span class="mention">@闺蜜小礼</span> 的送礼经验包，TA 会翻 TA 的小红书主页，给你 5 件 SKU 级精准推荐。
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="skill-card stage-block">
+        <div class="skill-card-avatar">
+          <img src="img/avatar-shaped.png" alt="闺蜜小礼">
+        </div>
+        <div class="skill-card-name">闺蜜小礼</div>
+        <div class="skill-card-meta">8.2万 粉丝</div>
+        <div class="skill-card-tags">
+          <span>💝 送礼方案</span>
+          <span>·</span>
+          <span>🎁 SKU 级精度</span>
+          <span>·</span>
+          <span>✨ 小红书全站</span>
+        </div>
+        <div class="skill-card-inner">
+          <div class="skill-card-inner-title">定制送礼方案</div>
+          <div class="skill-card-inner-desc">告诉我 TA 的画像，我翻一翻 TA 的小红书主页，给你梳理一份 SKU 级精准礼物清单。</div>
+          <button class="btn-skill-use">使用</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 阶段 2：接入预告 ═══════════════ -->
+    <div class="stage" data-stage="2">
+      <div class="msg-row msg-user has-tail stage-block">
+        <div class="msg-user-bubble">
+          使用
+          <img class="bubble-tail" src="img/tail-right.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="msg-row msg-ai has-tail stage-block">
+        <div class="msg-ai-bubble">
+          好的！请告诉我一些基础信息，我会结合 TA 的小红书主页帮你精准推荐。
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════ 阶段 3：信息收集表单 ═══════════════ -->
+    <div class="stage" data-stage="3">
+      <div class="time-label stage-block">刚刚</div>
+
+      <div class="form-card stage-block">
+        <div class="form-row">
+          <div class="form-label">你和 TA 的关系？</div>
+          <div class="tag-row" data-group="relation">
+            <div class="tag" data-value="闺蜜">闺蜜</div>
+            <div class="tag tag-selected" data-value="恋人">恋人</div>
+            <div class="tag" data-value="家人">家人</div>
+            <div class="tag" data-value="同事">同事</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">预算范围？</div>
+          <div class="tag-row" data-group="budget">
+            <div class="tag" data-value="¥500-1000">¥500-1000</div>
+            <div class="tag tag-selected" data-value="¥1000-2000">¥1000-2000</div>
+            <div class="tag" data-value="¥2000+">¥2000+</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">送礼场景？</div>
+          <div class="tag-row" data-group="occasion">
+            <div class="tag tag-selected" data-value="生日">生日</div>
+            <div class="tag" data-value="纪念日">纪念日</div>
+            <div class="tag" data-value="节日">节日</div>
+            <div class="tag" data-value="感谢">感谢</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">TA 的小红书主页（选填）</div>
+          <input type="text" class="form-input" placeholder="粘贴 TA 的主页链接…">
+        </div>
+
+        <div class="form-divider"></div>
+        <div class="form-hint">💡 你越了解 TA，推荐就越准</div>
+        <button class="btn-submit ready">确定</button>
+      </div>
+
+      <!-- 主页为空时的兜底追问：让用户用文字描述 TA -->
+      <div class="msg-row msg-ai has-tail fallback-line hidden-block">
+        <div class="msg-ai-bubble">
+          没有主页链接也没关系～用一两句话聊聊 TA 是个怎样的人吧，比如：性格、爱好、职业、星座、MBTI…我都能用上。
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 阶段 4：画像 + 5 礼物卡 ═══════════════ -->
+    <div class="stage" data-stage="4">
+      <!-- 用户气泡（选择摘要）由 JS 动态注入到 stage-3 末尾 -->
+
+      <!-- 画像介绍气泡（思考态后由 JS reveal） -->
+      <div class="msg-row msg-ai has-tail persona-intro-bubble hidden-block">
+        <div class="msg-ai-bubble">
+          TA 是个懂技术的运动男孩，审美偏冷调机能。
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <!-- 画像卡（仅头像 + 主副标题） -->
+      <div class="persona-card hidden-block">
+        <div class="persona-header">
+          <div class="persona-avatar">👨‍💻</div>
+          <div>
+            <div class="persona-name">男朋友 · 程序员 + 健身爱好者</div>
+            <div class="persona-summary">日均编码 8 小时 · 每周 4 次力量训练</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 兴趣信号气泡 -->
+      <div class="msg-row msg-ai has-tail persona-insights-bubble hidden-block">
+        <div class="msg-ai-bubble">
+          <div class="persona-insights">
+            <div class="persona-insight">
+              <div class="persona-insight-icon">🎯</div>
+              <div class="persona-insight-text">
+                <b>兴趣爱好</b>日均 8h 编码<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">手部友好减压键盘</span>
+              </div>
+            </div>
+            <div class="persona-insight">
+              <div class="persona-insight-icon">💪</div>
+              <div class="persona-insight-text">
+                <b>生活习惯</b>每周 4 次健身房<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">运动恢复装备对味</span>
+              </div>
+            </div>
+            <div class="persona-insight">
+              <div class="persona-insight-icon">🎨</div>
+              <div class="persona-insight-text">
+                <b>审美偏好</b>偏爱黑灰极简<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">冷调机能美学路线</span>
+              </div>
+            </div>
+            <div class="persona-insight">
+              <div class="persona-insight-icon">💎</div>
+              <div class="persona-insight-text">
+                <b>消费偏好</b>认准品质大牌<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">专业旗舰系列优选</span>
+              </div>
+            </div>
+          </div>
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <!-- 礼物介绍气泡 -->
+      <div class="msg-row msg-ai has-tail gift-intro-bubble hidden-block">
+        <div class="msg-ai-bubble">
+          这 5 件，每件都和 TA 主页里的某个细节呼应。
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <!-- 5 礼物卡（标准 .content-card 商品卡，点击拉起浮层）-->
+      <div class="gift-list hidden-block">
+
+        <div class="content-card gift-card" data-gift-id="1" role="button" tabindex="0">
+          <div class="content-card-body">
+            <div class="content-card-title">Keychron Q1 Pro 75% 茶轴</div>
+            <div class="content-card-desc">¥1,499 · 戳中 TA 想换 75% 配列的痛点</div>
+            <div class="content-card-source">
+              <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+              <span class="content-card-source-label">小红书</span>
+            </div>
+          </div>
+          <div class="content-card-thumb">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3B3B3D"/><stop offset="100%" stop-color="#1F1F21"/></linearGradient></defs>
+              <rect width="88" height="88" rx="12" fill="url(#g1)"/>
+              <rect x="14" y="32" width="60" height="32" rx="4" fill="#2A2A2C" stroke="#4A4A4C" stroke-width="0.5"/>
+              <g fill="#5A5A5C">
+                <rect x="18" y="36" width="6" height="6" rx="1"/><rect x="26" y="36" width="6" height="6" rx="1"/><rect x="34" y="36" width="6" height="6" rx="1"/><rect x="42" y="36" width="6" height="6" rx="1"/><rect x="50" y="36" width="6" height="6" rx="1"/><rect x="58" y="36" width="6" height="6" rx="1"/><rect x="66" y="36" width="4" height="6" rx="1"/>
+                <rect x="18" y="44" width="6" height="6" rx="1"/><rect x="26" y="44" width="6" height="6" rx="1"/><rect x="34" y="44" width="6" height="6" rx="1"/><rect x="42" y="44" width="6" height="6" rx="1"/><rect x="50" y="44" width="6" height="6" rx="1"/><rect x="58" y="44" width="6" height="6" rx="1"/><rect x="66" y="44" width="4" height="6" rx="1"/>
+                <rect x="18" y="52" width="6" height="6" rx="1"/><rect x="26" y="52" width="14" height="6" rx="1"/><rect x="42" y="52" width="6" height="6" rx="1"/><rect x="50" y="52" width="6" height="6" rx="1"/><rect x="58" y="52" width="12" height="6" rx="1"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="content-card gift-card" data-gift-id="2" role="button" tabindex="0">
+          <div class="content-card-body">
+            <div class="content-card-title">Theragun Mini 第二代 深空灰</div>
+            <div class="content-card-desc">¥1,290 · 健身练腿日的延迟性酸痛救星</div>
+            <div class="content-card-source">
+              <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+              <span class="content-card-source-label">小红书</span>
+            </div>
+          </div>
+          <div class="content-card-thumb">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2C2C2E"/><stop offset="100%" stop-color="#0F0F11"/></linearGradient></defs>
+              <rect width="88" height="88" rx="12" fill="url(#g2)"/>
+              <g transform="translate(44 44) rotate(-25) translate(-44 -44)">
+                <rect x="34" y="20" width="20" height="22" rx="6" fill="#4A4A4C"/>
+                <circle cx="44" cy="22" r="6" fill="#1A1A1C" stroke="#5A5A5C" stroke-width="0.8"/>
+                <rect x="38" y="42" width="12" height="20" rx="3" fill="#3A3A3C"/>
+                <rect x="40" y="62" width="8" height="6" rx="1" fill="#2A2A2C"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="content-card gift-card" data-gift-id="3" role="button" tabindex="0">
+          <div class="content-card-body">
+            <div class="content-card-title">Lululemon ABC 通勤长裤 28 寸</div>
+            <div class="content-card-desc">¥980 · 健身房 → 通勤 一条裤子搞定</div>
+            <div class="content-card-source">
+              <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+              <span class="content-card-source-label">小红书</span>
+            </div>
+          </div>
+          <div class="content-card-thumb">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5A5A5C"/><stop offset="100%" stop-color="#3A3A3C"/></linearGradient></defs>
+              <rect width="88" height="88" rx="12" fill="#E8E5E0"/>
+              <path d="M30 18 L58 18 L60 26 L60 70 L48 72 L48 38 L40 38 L40 72 L28 70 L28 26 Z" fill="url(#g3)"/>
+              <line x1="44" y1="18" x2="44" y2="38" stroke="#2A2A2C" stroke-width="0.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="content-card gift-card" data-gift-id="4" role="button" tabindex="0">
+          <div class="content-card-body">
+            <div class="content-card-title">AirPods Pro 2 USB-C</div>
+            <div class="content-card-desc">¥1,899 · 地铁通勤里也能安心写代码</div>
+            <div class="content-card-source">
+              <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+              <span class="content-card-source-label">小红书</span>
+            </div>
+          </div>
+          <div class="content-card-thumb">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+              <rect width="88" height="88" rx="12" fill="#F5F5F7"/>
+              <rect x="26" y="32" width="36" height="28" rx="6" fill="#FFFFFF" stroke="#D8D8DA" stroke-width="0.5"/>
+              <circle cx="36" cy="46" r="4" fill="#FFFFFF" stroke="#C8C8CA" stroke-width="0.5"/>
+              <path d="M34 46 L34 56 Q34 60 36 60 L36 50 Z" fill="#FFFFFF" stroke="#C8C8CA" stroke-width="0.5"/>
+              <circle cx="52" cy="46" r="4" fill="#FFFFFF" stroke="#C8C8CA" stroke-width="0.5"/>
+              <path d="M50 46 L50 56 Q50 60 52 60 L52 50 Z" fill="#FFFFFF" stroke="#C8C8CA" stroke-width="0.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="content-card gift-card" data-gift-id="5" role="button" tabindex="0">
+          <div class="content-card-body">
+            <div class="content-card-title">ON Cloudmonster 跑鞋 42 黑白</div>
+            <div class="content-card-desc">¥1,580 · 力量型选手的厚底缓震首选</div>
+            <div class="content-card-source">
+              <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+              <span class="content-card-source-label">小红书</span>
+            </div>
+          </div>
+          <div class="content-card-thumb">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+              <rect width="88" height="88" rx="12" fill="#FAFAFA"/>
+              <path d="M14 56 Q14 48 22 46 L48 38 Q60 36 68 42 L74 50 Q76 56 72 60 L20 60 Q14 60 14 56 Z" fill="#1A1A1C"/>
+              <ellipse cx="44" cy="58" rx="32" ry="3" fill="#FFFFFF" opacity=".15"/>
+              <g fill="#FFFFFF" opacity=".55">
+                <rect x="22" y="49" width="3" height="6" rx="1"/>
+                <rect x="28" y="48" width="3" height="7" rx="1"/>
+                <rect x="34" y="47" width="3" height="8" rx="1"/>
+                <rect x="40" y="46" width="3" height="9" rx="1"/>
+                <rect x="46" y="46" width="3" height="9" rx="1"/>
+                <rect x="52" y="46" width="3" height="9" rx="1"/>
+                <rect x="58" y="47" width="3" height="8" rx="1"/>
+                <rect x="64" y="49" width="3" height="6" rx="1"/>
+              </g>
+              <text x="44" y="22" text-anchor="middle" fill="#1A1A1C" font-size="13" font-weight="700" letter-spacing="2" font-family="SF Pro Display, sans-serif">ON</text>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 引导气泡 -->
+      <div class="msg-row msg-ai has-tail followup-line hidden-block">
+        <div class="msg-ai-bubble">
+          挑出心动的那件了吗？或者犹豫不决，去问问大家？
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <!-- 联想问题 -->
+      <div class="followup-keywords keyword-list hidden-block">
+        <div class="kw-item" data-action="plan">
+          <span class="kw-text">选好了，给我一个完整送礼方案</span>
+          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+        </div>
+        <div class="kw-item" data-action="askcommunity">
+          <span class="kw-text">还是拿不准，在社区里问问大家的意见</span>
+          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════ 阶段 5：完整送礼方案 ═══════════════ -->
+    <div class="stage" data-stage="5">
+      <!-- 用户气泡由 JS 注入：「就选这把 Keychron Q1 Pro」 -->
+
+      <!-- 方案以 AI 气泡形式输出：标准对话气泡 + 内部富文本 -->
+      <div class="msg-row msg-ai has-tail plan-bubble hidden-block">
+        <div class="msg-ai-bubble plan-bubble-body">
+          <p class="plan-bubble-lead">收到！送一把好键盘，要送得有故事感。我把整套流程帮你理好了：</p>
+
+          <h2>🎁 完整送礼方案</h2>
+          <p><strong>主礼物 · Keychron Q1 Pro 75% 茶轴</strong></p>
+          <hr>
+
+          <h3>🎀 礼物组合</h3>
+          <ul>
+            <li><strong>主礼</strong>：Keychron Q1 Pro 75% 茶轴 — ¥1,499</li>
+            <li><strong>配件</strong>：无印良品 木质护腕垫 — ¥99</li>
+            <li><strong>趣味</strong>：瑞幸美式 + 手写小卡 — ¥18</li>
+          </ul>
+          <blockquote>合计 ¥1,616，压在 ¥1000-2000 预算的高峰体验区。</blockquote>
+
+          <h3>📦 包装建议</h3>
+          <p>Keychron 原盒已经足够克制好看，外面套一层 <strong>纯白哑光礼盒 + 黑色细丝带</strong> 就够了。卡片用 <strong>哑光黑卡纸 + 银墨</strong>，呼应 TA「冷调机能美学」的审美。</p>
+          <ul>
+            <li>✓ 极简黑白基调</li>
+            <li>✓ 原箱 + 外层礼盒（双层惊喜）</li>
+            <li>✗ 爱心 / 卡通包装、大红色蝴蝶结</li>
+          </ul>
+
+          <h3>💌 贺卡文案</h3>
+          <blockquote>送你一把不会让手腕喊累的键盘——<br>往后写代码的每个深夜，<br>都希望你听见的，是它脆而稳的回响。</blockquote>
+          <p><em>42 字，呼应 TA 在《工位 setup》里说过的"打 8 小时手腕酸"。</em></p>
+
+          <h3>🛒 下单渠道</h3>
+          <ul>
+            <li><strong>主礼物</strong>：Keychron 京东自营旗舰店 · 次日达</li>
+            <li><strong>下单备注</strong>：勾选「礼品包装」+「匿名配送」</li>
+            <li><strong>配套</strong>：无印良品天猫店 · 美式当日瑞幸下单</li>
+          </ul>
+          <p>京东自营走顺丰，正品和时效双保险；匿名配送避免快递短信提前剧透。</p>
+
+          <h3>⏰ 送出时机</h3>
+          <ol>
+            <li><strong>D-3</strong> · 京东下单，约定 D-1 送达自己住处</li>
+            <li><strong>D-1</strong> · 收件 + 拆原箱 + 二次包装 + 写贺卡</li>
+            <li><strong>D-Day</strong> · 早 8:30 当面送出（晨光 + 仪式感最强）；异地则提前 1 天寄到 TA 闺蜜处代收</li>
+          </ol>
+
+          <h3>⚠️ 避雷提醒</h3>
+          <ul>
+            <li>不要选 <strong>红轴</strong> — TA 评论区明确说想要"段落感"，红轴回弹偏轻会失望</li>
+            <li>不要选 <strong>透明清水轴款</strong>，跟 TA 极简黑灰审美强冲突</li>
+            <li>贺卡 <strong>不要写"加油打工人"梗</strong> — TA 朋友圈调侃过这种话有 PUA 感</li>
+          </ul>
+
+          <h3>🔄 备选方案</h3>
+          <ul>
+            <li><strong>缺货时</strong>：改送 Lululemon ABC 长裤（推荐 #3），同价位、命中"通勤舒服"痛点</li>
+            <li><strong>想加码</strong>：+ Theragun Mini（推荐 #2），组成「工作 + 恢复」双场景，总价到 ¥2,789</li>
+            <li><strong>想低调</strong>：改送 AirPods Pro 2（推荐 #4），¥1,899 单品，包装轻巧</li>
+          </ul>
+
+          <h3>💭 TA 可能的反应</h3>
+          <p><strong>"哇这个我攒了好久想入！"</strong><br>高概率反应。当晚就会拆开试敲，接下来一周朋友圈晒工位。</p>
+          <p><strong>"太贵了你下次别破费"</strong><br>实在话不是客套。可以借机说"看你以后写出更牛的代码就值"。</p>
+          <p><strong>"配列我没用过会不会不习惯"</strong><br>小概率。提前补一句"键帽轴体都能换，先用一周看手感"。</p>
+
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <!-- 收下经验包引导气泡 -->
+      <div class="msg-row msg-ai has-tail plan-claim-bubble hidden-block">
+        <div class="msg-ai-bubble plan-claim-body">
+          <p class="plan-claim-text">看完有啥不清楚的随时问小姨~ 收下这条经验包，下次随时回来，不怕找不到</p>
+          <button class="btn-claim-skill">收下经验包</button>
+          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ====== 底部输入栏 ====== -->
+  <div class="dd-input-bar">
+    <button class="dd-input-side-btn" aria-label="更多">
+      <img src="img/add_circle.png" alt="" draggable="false">
+    </button>
+    <div class="dd-input-content">
+      <div class="dd-input-text-area">
+        <input type="text" class="dd-input-field" placeholder="给点点发消息...">
+      </div>
+    </div>
+    <button class="dd-input-side-btn" aria-label="语音输入">
+      <img src="img/chat_bottom_voice.png" alt="" draggable="false">
+    </button>
+  </div>
+
+  <div class="dd-bottom-safe">
+    <div class="dd-watermark">内容由 AI 生成</div>
+    <div class="dd-home-indicator-bar"></div>
+  </div>
+
+  <!-- ====== 小红书发布笔记全屏浮层 ====== -->
+  <div class="xhs-mask" hidden>
+    <div class="xhs-app">
+      <div class="xhs-status-bar">
+        <span class="xhs-time">12:00</span>
+        <span class="xhs-status-icons">
+          <svg viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1" fill="#1A1A1C"/><rect x="4" y="6" width="3" height="6" rx="1" fill="#1A1A1C"/><rect x="8" y="3" width="3" height="9" rx="1" fill="#1A1A1C"/><rect x="12" y="0" width="3" height="12" rx="1" fill="#1A1A1C"/></svg>
+          <svg viewBox="0 0 18 14" width="18" height="14"><path d="M9 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z M5.6 8.1a4.8 4.8 0 016.8 0M2.2 4.7a9.6 9.6 0 0113.6 0" fill="none" stroke="#1A1A1C" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 26 12" width="26" height="12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="#1A1A1C" stroke-width="1"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1C"/><rect x="23" y="4" width="2" height="4" rx="0.5" fill="#1A1A1C"/></svg>
+        </span>
+      </div>
+      <div class="xhs-header">
+        <button class="xhs-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1A1A1C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </div>
+
+      <div class="xhs-cover-row">
+        <div class="xhs-cover">我用点点经验包帮我生成了送礼推荐</div>
+        <div class="xhs-cover xhs-cover-secondary">
+          <div class="xhs-cover-mock-title">想送男朋友的礼物</div>
+          <div class="xhs-cover-mock-table">
+            <div class="xhs-row"><span>键盘</span><span>Q1 Pro 75% 茶轴</span></div>
+            <div class="xhs-row"><span>放松</span><span>Theragun Mini 二代</span></div>
+            <div class="xhs-row"><span>通勤</span><span>Lululemon ABC 长裤</span></div>
+            <div class="xhs-row"><span>降噪</span><span>AirPods Pro 2</span></div>
+            <div class="xhs-row"><span>跑鞋</span><span>ON Cloudmonster</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="xhs-field xhs-title-field">添加标题</div>
+      <div class="xhs-field xhs-body-field">
+        <span>添加正文或者发语音</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9A9A9D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3zM19 11a7 7 0 01-14 0M12 18v4M8 22h8"/></svg>
+      </div>
+
+      <div class="xhs-tags">
+        <span class="xhs-tag">#在点点发现宝藏经验包</span>
+        <span class="xhs-tag">#经验包</span>
+        <span class="xhs-tag">#点点</span>
+        <span class="xhs-tag">#送礼推荐</span>
+      </div>
+
+      <div class="xhs-actions">
+        <span class="xhs-action"># 话题</span>
+        <span class="xhs-action">@ 用户</span>
+        <span class="xhs-action">📍 地点</span>
+        <span class="xhs-action">📊 投票</span>
+      </div>
+
+      <div class="xhs-list">
+        <div class="xhs-list-item">
+          <span class="xhs-list-icon">📍</span>
+          <span class="xhs-list-text">你在哪里</span>
+          <span class="xhs-list-arrow">›</span>
+        </div>
+        <div class="xhs-list-item">
+          <span class="xhs-list-icon">🔓</span>
+          <span class="xhs-list-text">公开可见</span>
+          <span class="xhs-list-arrow">›</span>
+        </div>
+        <div class="xhs-list-item">
+          <span class="xhs-list-icon">🧩</span>
+          <span class="xhs-list-text">添加组件</span>
+          <span class="xhs-list-arrow">›</span>
+        </div>
+      </div>
+
+      <div class="xhs-bottom-bar">
+        <button class="xhs-bottom-btn">
+          <span class="xhs-bottom-icon">⚙️</span>
+          <span>设置</span>
+        </button>
+        <button class="xhs-bottom-btn">
+          <span class="xhs-bottom-icon">📥</span>
+          <span>存草稿</span>
+        </button>
+        <button class="xhs-publish">发布笔记</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 商品详情浮层（基于 12. 底部弹窗 扩展为大浮层）====== -->
+  <div class="sheet-mask gift-detail-mask" hidden>
+    <div class="sheet-panel gift-detail-panel" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <button class="gift-detail-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="gift-detail-scroll">
+        <div class="gift-detail-hero">
+          <div class="gift-detail-thumb" id="gd-thumb"></div>
+          <div class="gift-detail-meta">
+            <div class="gift-detail-title" id="gd-title"></div>
+            <div class="gift-detail-price" id="gd-price"></div>
+            <div class="gift-detail-channel" id="gd-channel"></div>
+          </div>
+        </div>
+
+        <div class="gift-detail-section">
+          <div class="gift-detail-section-title">推荐理由</div>
+          <div class="gift-detail-reason" id="gd-reason"></div>
+        </div>
+
+        <div class="gift-detail-section">
+          <div class="gift-detail-section-title">用户口碑</div>
+          <div class="gift-detail-quotes" id="gd-quotes"></div>
+        </div>
+      </div>
+      <div class="gift-detail-cta-wrap">
+        <button class="btn btn-green btn-lg gift-detail-cta">就选这个</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/demo.js"></script>
+</body>
+</html>

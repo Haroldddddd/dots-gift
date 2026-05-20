@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>组件库预览 — 点点设计规范</title>
+<link rel="stylesheet" href="css/tokens.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #E8E8E8;
+    color: var(--title);
+    padding: 32px;
+    padding-bottom: 120px;
+  }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .page-desc { font-size: 14px; color: var(--description); margin-bottom: 48px; }
+
+  /* Section */
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 18px; font-weight: 600; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: ''; display: block; width: 4px; height: 18px;
+    background: var(--info5); border-radius: 2px;
+  }
+  .section-desc { font-size: 13px; color: var(--description); margin-bottom: 20px; }
+
+  /* Demo area — 模拟对话背景 */
+  .demo {
+    background: var(--chat-bg, #F5F5F5);
+    border-radius: 22px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .demo.row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  /* =========================================================
+     以下为 components.mdc 中所有组件的 CSS（原样复制）
+     ========================================================= */
+
+  /* === 1. 对话气泡 === */
+  .msg-row { margin-bottom: 20px; padding: 0; }
+  .msg-row.has-tail { margin-bottom: 26px; }
+  .msg-row.msg-ai + .msg-row.msg-ai { margin-bottom: 16px; }
+  .msg-row.msg-user + .msg-row.msg-user { margin-bottom: 8px; }
+
+  .msg-ai { display: flex; justify-content: flex-start; }
+  .msg-ai-bubble {
+    position: relative; width: fit-content; max-width: 346px;
+    padding: 12px 20px; background: #FFFFFF; border-radius: 22px;
+    border: .5px solid #E6E6E6; color: #0A0A0A;
+    font-size: 16px; line-height: 1.69em; letter-spacing: 0.06em;
+    overflow-wrap: break-word;
+  }
+  .msg-ai-bubble .bubble-tail {
+    position: absolute; left: -1px; bottom: -11px;
+    width: 24px; height: 24px; pointer-events: none; display: block;
+  }
+
+  .msg-user { display: flex; justify-content: flex-end; }
+  .msg-user-bubble {
+    position: relative; width: fit-content; max-width: 346px;
+    padding: 12px 20px; background: #EBEBEB; border: .5px solid #DEDEDE;
+    border-radius: 22px; color: #0A0A0A;
+    font-size: 16px; line-height: 1.69em; letter-spacing: 0.06em;
+    overflow-wrap: break-word;
+  }
+  .msg-user-bubble .bubble-tail {
+    position: absolute; right: -1px; bottom: -11px;
+    width: 24px; height: 24px; pointer-events: none; display: block;
+  }
+
+  /* === 2. 思考中（Lottie 云朵） === */
+  .dd-loading { align-self: flex-start; display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; margin: 0; padding: 0; }
+  .dd-loading.show { display: block; opacity: 1; transform: translateY(0); margin-bottom: 12px; }
+  .loading-container {
+    display: inline-flex; align-items: center; height: 54px; border-radius: 24px;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.85) 30%, rgba(255,255,255,0.4) 70%, rgba(255,255,255,0) 100%);
+    border: none; padding: 0 18px;
+  }
+  .loading-lottie { width: 36px; height: 36px; flex-shrink: 0; }
+  .loading-text { font-size: 14px; color: var(--placeholder); white-space: nowrap; margin-left: 4px; }
+
+  /* === 3. 推荐词 === */
+  .keyword-list { align-self: flex-start; display: flex; flex-direction: column; gap: 4px; margin-top: 0; margin-bottom: 20px; padding: 0 16px; }
+  .kw-item { display: inline-flex; align-items: center; gap: 6px; padding: 8px 0; background: transparent; font-size: 15px; color: rgba(20,20,20,.6); cursor: pointer; align-self: flex-start; user-select: none; transition: color 0.2s; }
+  .kw-item:active { opacity: .5; }
+  .kw-arrow { flex-shrink: 0; color: rgba(20,20,20,.4); display: flex; align-items: center; justify-content: center; }
+  .kw-arrow svg { width: 12px; height: 12px; }
+
+  /* === 4. 时间标签 === */
+  .time-label { text-align: center; font-size: 13px; color: var(--placeholder); margin: 0 0 26px; align-self: center; }
+
+  /* === 5. 富文本卡片 === */
+  .ai-card {
+    width: 100%; max-width: 406px;
+    background: rgba(255,255,255,.80); border-radius: 36px;
+    border: .5px solid rgba(162,162,162,.24);
+    box-shadow: 0 4px 10px rgba(20,20,20,.04); overflow: hidden;
+  }
+  .ai-card-body { padding: 28px 24px; color: #0A0A0A; font-size: 16px; line-height: 1.69em; letter-spacing: 0.06em; }
+  .ai-card-body h1 { font-size: 20px; line-height: 1.7; font-weight: 600; margin-bottom: 32px; }
+  .ai-card-body h2 { font-size: 18px; line-height: 1.7; font-weight: 600; margin-bottom: 22px; }
+  .ai-card-body h3 { font-size: 17px; line-height: 1.7; font-weight: 600; margin-bottom: 16px; }
+  .ai-card-body h4 { font-size: 16px; line-height: 1.7; font-weight: 600; margin-bottom: 16px; }
+  .ai-card-body p { font-size: 16px; line-height: 1.7; letter-spacing: 0.06em; color: var(--paragraph); margin-bottom: 16px; }
+  .ai-card-body p:last-child { margin-bottom: 0; }
+  .ai-card-body ul { padding-left: 14px; margin-bottom: 16px; }
+  .ai-card-body ul li { font-size: 16px; line-height: 1.7; letter-spacing: 0.06em; color: var(--paragraph); margin-bottom: 4px; }
+  .ai-card-body ol { padding-left: 14px; margin-bottom: 16px; }
+  .ai-card-body ol li { font-size: 16px; line-height: 1.7; letter-spacing: 0.06em; color: var(--paragraph); margin-bottom: 4px; }
+  .ai-card-body blockquote { border-left: 3px solid var(--info5); padding-left: 14px; margin: 0 0 16px; color: var(--description); font-size: 16px; line-height: 1.7; }
+  .ai-card-body hr { border: none; height: 0.5px; background: rgba(20,20,20,.08); margin: 22px 0; }
+  .ai-card-body strong { font-weight: 600; color: var(--title); }
+  .ai-card-body a { color: #0D4087; text-decoration: none; }
+  .ai-card-body code { font-family: 'SF Mono', 'Menlo', monospace; font-size: 14px; background: rgba(20,20,20,.05); padding: 2px 6px; border-radius: 4px; }
+
+  /* === 6. 内容卡片（统一结构） === */
+  .content-card {
+    background: rgba(255,255,255,.72); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-radius: 22px; border: 0.5px solid rgba(255,255,255,.18);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    display: flex; align-items: flex-end; padding: 13px 13px 13px 18px;
+    max-width: 280px;
+  }
+  .content-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; }
+  .content-card-title { font-size: 13px; font-weight: 600; line-height: 24px; color: var(--title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .content-card-desc { font-size: 12px; line-height: 20px; color: var(--paragraph); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+  .content-card-source { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .content-card-source-icon { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .content-card-source-icon svg { width: 16px; height: 16px; }
+  .content-card-source-label { font-size: 11px; color: var(--desc-lighter); }
+  .content-card-thumb { width: 44px; height: 44px; object-fit: cover; display: block; flex-shrink: 0; margin-left: 10px; border-radius: 12px; }
+  .content-card-thumb-round { border-radius: 50%; }
+
+  /* === 7. 按钮 === */
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn-pair { width: 100%; max-width: 360px; }
+  .btn-pair .btn { flex: 1; }
+  .btn { border: none; cursor: pointer; font-family: inherit; font-weight: 500; border-radius: 24px; transition: all .15s; }
+  .btn:active { transform: scale(.97); opacity: .6; }
+  .btn-lg { height: 48px; padding: 0 24px; font-size: 16px; }
+  .btn-md { height: 36px; padding: 0 16px; font-size: 14px; }
+  .btn-sm { height: 28px; padding: 0 12px; font-size: 12px; }
+  .btn-green { background: var(--info5); color: #fff; }
+  .btn-outline { background: transparent; color: var(--title); border: 1px solid rgba(20,20,20,.08); }
+  .btn-ghost { background: transparent; color: var(--title); }
+  .btn-text { background: transparent; color: var(--info5); border-radius: 0; }
+  .btn-disabled { opacity: .4; pointer-events: none; }
+
+  /* === 8. 标签 === */
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag { height: 28px; padding: 0 14px; border-radius: 12px; font-size: 14px; display: flex; align-items: center; background: rgba(50,50,50,.05); color: var(--paragraph); border: 0.5px solid rgba(20,20,20,.08); }
+  .tag-selected { background: rgba(111,210,189,.1); color: #2A8E74; border: 1px solid var(--info5); }
+  .tag-disabled { background: rgba(20,20,20,.09); color: var(--desc-lighter); border: none; }
+
+  /* === 9. 输入框 === */
+  .input-group { width: 100%; max-width: 360px; }
+  .input-label { display: block; font-size: 14px; color: var(--paragraph); margin-bottom: 8px; }
+  .input-field { width: 100%; height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid rgba(20,20,20,.08); background: #FFFFFF; font-size: 16px; color: var(--title); font-family: inherit; outline: none; transition: border-color .2s; }
+  .input-field::placeholder { color: var(--placeholder); }
+  .input-field:focus { border-color: var(--info5); }
+
+  /* === 10. 复选框 === */
+  .checkbox-row { display: flex; gap: 20px; align-items: center; }
+  .checkbox-item { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .checkbox { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid rgba(20,20,20,.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+  .checkbox-checked { background: var(--info5); border-color: var(--info5); color: #fff; font-size: 14px; }
+  .checkbox-disabled { border-color: rgba(20,20,20,.09); }
+  .checkbox-label { font-size: 14px; color: var(--title); }
+  .checkbox-label-disabled { color: var(--desc-lighter); }
+
+  /* === 11. 分割线 === */
+  .divider { height: 0.5px; background: rgba(20,20,20,.08); margin: 12px 0; }
+  .divider-inset { margin-left: 16px; }
+
+  /* === 12. 底部弹窗 === */
+  .sheet-demo { width: 100%; max-width: 400px; position: relative; background: rgba(0,0,0,.4); border-radius: 16px; padding: 80px 0 0; overflow: hidden; }
+  .sheet-panel { background: #FFFFFF; border-radius: 20px 20px 0 0; padding: 12px 0 20px; }
+  .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(20,20,20,.09); margin: 0 auto 16px; }
+  .sheet-item { padding: 16px 20px; font-size: 16px; color: var(--title); text-align: center; cursor: pointer; }
+  .sheet-item:active { background: rgba(20,20,20,.04); }
+  .sheet-danger { color: #FF2442; }
+  .sheet-cancel { color: var(--description); border-top: 0.5px solid rgba(20,20,20,.08); }
+
+  /* === 13. 兜底卡 === */
+  .fallback-card { background: rgba(255,255,255,.80); border-radius: 22px; box-shadow: 0 4px 10px rgba(20,20,20,.04); padding: 20px 24px; width: 100%; max-width: 300px; }
+  .fallback-text { font-size: 14px; color: var(--title); opacity: .4; }
+
+  /* === 14. 对话流卡片 === */
+  .chat-card { background: rgba(255,255,255,.80); border-radius: 22px; box-shadow: 0 4px 10px rgba(20,20,20,.04); overflow: hidden; width: 100%; max-width: 320px; }
+  .chat-card-header { padding: 14px 20px 8px; font-size: 13px; color: var(--description); }
+  .chat-card-body { padding: 0 20px 16px; }
+  .chat-card-title { font-size: 16px; font-weight: 600; color: var(--title); line-height: 1.5; }
+  .chat-card-source { display: flex; align-items: center; gap: 10px; padding: 0 20px 16px; }
+  .chat-card-source-thumb { width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #C9A87C, #A88D6E); border: 0.5px solid rgba(20,20,20,.08); flex-shrink: 0; }
+  .chat-card-source-label { font-size: 13px; color: var(--description); }
+  .chat-card-source-text { font-size: 13px; color: var(--title); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<h1>📦 组件库预览</h1>
+<p class="page-desc">components.mdc 中所有组件的真实渲染效果。对照 Figma 逐项校验。</p>
+
+<!-- ====== 1. 对话气泡 ====== -->
+<div class="section">
+  <div class="section-title">1. 对话气泡</div>
+  <div class="section-desc">AI 气泡（Fill A 白色）左对齐 vs 用户气泡（Fill B 灰色）右对齐。带尾巴图片。</div>
+  <div class="demo">
+    <div class="msg-row msg-user has-tail">
+      <div class="msg-user-bubble">
+        对比这两款面霜，哪个更合适我
+        <img class="bubble-tail" src="img/tail-right.png" alt="" draggable="false">
+      </div>
+    </div>
+    <div class="time-label">刚刚</div>
+    <div class="msg-row msg-ai">
+      <div class="msg-ai-bubble">这两款面霜各有优势，我来帮你分析一下。</div>
+    </div>
+    <div class="msg-row msg-ai has-tail">
+      <div class="msg-ai-bubble">
+        黑绷带面霜功效强大，适合干性至混合性肌肤。使用时需要注意手法和适用肤质，才能让它发挥最佳效果。
+        <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 2. 思考中 ====== -->
+<div class="section">
+  <div class="section-title">2. 思考中状态</div>
+  <div class="section-desc">Lottie 云朵呼吸动画（cloud.json），从线上 demo 提取。</div>
+  <div class="demo">
+    <div class="dd-loading show">
+      <div class="loading-container">
+        <div class="loading-lottie" id="loadingLottie"></div>
+        <span class="loading-text">思考中...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 3. 推荐词 ====== -->
+<div class="section">
+  <div class="section-title">3. 推荐词</div>
+  <div class="section-desc">对话开始时的引导，灰色文字 + 右箭头。</div>
+  <div class="demo">
+    <div class="keyword-list">
+      <div class="kw-item">
+        <span class="kw-text">帮我整理收藏的笔记</span>
+        <span class="kw-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="kw-item">
+        <span class="kw-text">推荐周末去哪玩</span>
+        <span class="kw-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="kw-item">
+        <span class="kw-text">最近有什么好物值得买</span>
+        <span class="kw-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 4. 时间标签 ====== -->
+<div class="section">
+  <div class="section-title">4. 时间标签</div>
+  <div class="demo">
+    <div class="time-label">刚刚</div>
+    <div class="time-label">今天 14:30</div>
+    <div class="time-label">昨天 09:15</div>
+  </div>
+</div>
+
+<!-- ====== 5. AI 富文本卡片 ====== -->
+<div class="section">
+  <div class="section-title">5. AI 富文本卡片</div>
+  <div class="section-desc">圆角 36px，富文本排版体系：H1 20pt / H2 18pt / H3 17pt / H4 16pt，间距 32→22→16。</div>
+  <div class="demo">
+    <div class="ai-card">
+      <div class="ai-card-body">
+        <h2>黑绷带面霜使用指南</h2>
+        <h3>适用肤质</h3>
+        <p>黑绷带面霜含有高浓度活性成分，适合<strong>干性至混合性</strong>肌肤。油性肌肤建议薄涂，避免过度滋润导致的闷痘问题。</p>
+        <h3>使用手法</h3>
+        <p>取黄豆大小用量，以指腹轻轻按压的方式涂抹于面部。避免大力拉扯皮肤，从面部中央向外推开。</p>
+        <blockquote>小贴士：搭配精华使用效果更佳，建议先用修复精华打底。</blockquote>
+        <h3>推荐搭配</h3>
+        <ul>
+          <li>兰蔻小黑瓶精华</li>
+          <li>兰蔻极光水</li>
+          <li>兰蔻粉水（干皮适用）</li>
+        </ul>
+        <hr>
+        <p>以上信息来源于社区用户反馈，具体使用请结合个人肤质调整。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 6. 内容卡片 ====== -->
+<div class="section">
+  <div class="section-title">6. 内容卡片</div>
+  <div class="section-desc">统一结构：左文字 + 右缩略图，毛玻璃背景。缩略图与底部对齐。副文案下方展示来源信息。</div>
+  <div class="demo" style="gap: 16px;">
+
+    <!-- 笔记卡 -->
+    <div style="font-size:12px; color:var(--description); width:100%; font-weight:600;">笔记卡</div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="content-card-title">希望被你喜欢的家里，能有我家</div>
+        <div class="content-card-desc">记录自己小户型的房间设计，三居室改造花了不到8万</div>
+        <div class="content-card-source">
+          <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+          <span class="content-card-source-label">小红书</span>
+        </div>
+      </div>
+      <div class="content-card-thumb" style="background:linear-gradient(135deg,#D4A574,#B8866A);"></div>
+    </div>
+
+    <!-- 个人页卡 -->
+    <div style="font-size:12px; color:var(--description); width:100%; font-weight:600;">个人页卡（圆形头像）</div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="content-card-title">家居设计师小林</div>
+        <div class="content-card-desc">128篇笔记 · 2.3万粉丝</div>
+        <div class="content-card-source">
+          <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+          <span class="content-card-source-label">小红书</span>
+        </div>
+      </div>
+      <div class="content-card-thumb content-card-thumb-round" style="background:linear-gradient(135deg,#E8B4B8,#C98A8E);"></div>
+    </div>
+
+    <!-- POI 地点卡 -->
+    <div style="font-size:12px; color:var(--description); width:100%; font-weight:600;">POI 地点卡</div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="content-card-title">TRINE</div>
+        <div class="content-card-desc">徐家汇 · 法餐 · ¥139/人</div>
+        <div class="content-card-source">
+          <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+          <span class="content-card-source-label">小红书</span>
+        </div>
+      </div>
+      <div class="content-card-thumb" style="background:linear-gradient(135deg,#4A6741,#2D3E28);"></div>
+    </div>
+
+    <!-- 商品卡 -->
+    <div style="font-size:12px; color:var(--description); width:100%; font-weight:600;">商品卡</div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="content-card-title">蓝歧170克棉抓绒primaloft轻薄户外抓绒...</div>
+        <div class="content-card-desc">¥169.9 &nbsp; 已售200+</div>
+        <div class="content-card-source">
+          <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FF2442"/></svg></div>
+          <span class="content-card-source-label">小红书</span>
+        </div>
+      </div>
+      <div class="content-card-thumb" style="background:linear-gradient(135deg,#6A8FB5,#4A7099);"></div>
+    </div>
+
+    <!-- 外链卡 -->
+    <div style="font-size:12px; color:var(--description); width:100%; font-weight:600;">外链卡</div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="content-card-title">黑绷带到底什么样？全网探店第一视角</div>
+        <div class="content-card-desc">环黑五系列，即将上线</div>
+        <div class="content-card-source">
+          <div class="content-card-source-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#7B68EE"/></svg></div>
+          <span class="content-card-source-label">链接网页</span>
+        </div>
+      </div>
+      <div class="content-card-thumb" style="background:linear-gradient(135deg,#8B7355,#6B5340);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 7. 按钮 ====== -->
+<div class="section">
+  <div class="section-title">7. 按钮</div>
+  <div class="section-desc">仅品牌绿 #6FD2BD，禁止黑色和红色。三种尺寸 Large / Medium / Mini。</div>
+  <div class="demo" style="gap: 16px;">
+    <div class="btn-row">
+      <button class="btn btn-green btn-lg">品牌绿 Large</button>
+      <button class="btn btn-outline btn-lg">描边 Large</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green btn-md">品牌绿 Medium</button>
+      <button class="btn btn-outline btn-md">描边 Medium</button>
+      <button class="btn btn-ghost btn-md">Ghost</button>
+      <button class="btn btn-text btn-md">文本按钮</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green btn-sm">Mini</button>
+      <button class="btn btn-outline btn-sm">Mini</button>
+      <button class="btn btn-green btn-lg btn-disabled">禁用态</button>
+    </div>
+    <div class="btn-row btn-pair">
+      <button class="btn btn-outline btn-lg">取消</button>
+      <button class="btn btn-green btn-lg">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 8. 标签 ====== -->
+<div class="section">
+  <div class="section-title">8. 标签</div>
+  <div class="section-desc">圆角 12px。默认 / 选中（品牌绿） / 禁用。</div>
+  <div class="demo row">
+    <div class="tag-row">
+      <div class="tag">默认标签</div>
+      <div class="tag">美食</div>
+      <div class="tag">旅行</div>
+      <div class="tag tag-selected">已选中</div>
+      <div class="tag tag-selected">护肤</div>
+      <div class="tag tag-disabled">禁用</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 9. 输入框 ====== -->
+<div class="section">
+  <div class="section-title">9. 输入框</div>
+  <div class="section-desc">圆角 8px，聚焦时边框变品牌绿。点击试试。</div>
+  <div class="demo row">
+    <div class="input-group">
+      <label class="input-label">默认状态（点击聚焦）</label>
+      <input class="input-field" type="text" placeholder="请输入内容...">
+    </div>
+  </div>
+</div>
+
+<!-- ====== 10. 复选框 ====== -->
+<div class="section">
+  <div class="section-title">10. 圆形复选框</div>
+  <div class="section-desc">圆形（border-radius: 50%），选中色品牌绿。禁止方形。</div>
+  <div class="demo row">
+    <div class="checkbox-row">
+      <label class="checkbox-item">
+        <div class="checkbox"></div>
+        <span class="checkbox-label">未选中</span>
+      </label>
+      <label class="checkbox-item">
+        <div class="checkbox checkbox-checked">✓</div>
+        <span class="checkbox-label">已选中</span>
+      </label>
+      <label class="checkbox-item">
+        <div class="checkbox checkbox-disabled"></div>
+        <span class="checkbox-label checkbox-label-disabled">禁用</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 11. 分割线 ====== -->
+<div class="section">
+  <div class="section-title">11. 分割线</div>
+  <div class="section-desc">0.5px，Separator 2 色。支持通栏和缩进。</div>
+  <div class="demo" style="max-width: 400px;">
+    <div style="font-size:13px; color: var(--description); margin-bottom: 8px;">通栏分割线</div>
+    <div class="divider"></div>
+    <div style="font-size:13px; color: var(--description); margin: 8px 0;">缩进分割线（左 16px）</div>
+    <div class="divider divider-inset"></div>
+  </div>
+</div>
+
+<!-- ====== 12. 底部弹窗 ====== -->
+<div class="section">
+  <div class="section-title">12. 底部弹窗 (Bottom Sheet)</div>
+  <div class="section-desc">Mask Bg 2 遮罩 + Bg 3 面板 + 圆角 20px。红色仅用于危险操作文字。</div>
+  <div class="demo row">
+    <div class="sheet-demo">
+      <div class="sheet-panel">
+        <div class="sheet-handle"></div>
+        <div class="sheet-item">分享给好友</div>
+        <div class="sheet-item">收藏</div>
+        <div class="sheet-item sheet-danger">删除对话</div>
+        <div class="sheet-item sheet-cancel">取消</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 13. 兜底卡片 ====== -->
+<div class="section">
+  <div class="section-title">13. 兜底卡片</div>
+  <div class="demo row">
+    <div class="fallback-card">
+      <div class="fallback-text">当前暂不支持显示的消息类型</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 14. 对话流卡片 ====== -->
+<div class="section">
+  <div class="section-title">14. 对话流卡片</div>
+  <div class="section-desc">引用笔记评论的卡片，带来源信息。</div>
+  <div class="demo row">
+    <div class="chat-card">
+      <div class="chat-card-header">分享 @自由的风 的评论</div>
+      <div class="chat-card-body">
+        <div class="chat-card-title">这个真的好吃，算得上特色</div>
+      </div>
+      <div class="divider" style="margin: 12px 20px;"></div>
+      <div class="chat-card-source">
+        <div class="chat-card-source-thumb"></div>
+        <div>
+          <div class="chat-card-source-label">来自笔记</div>
+          <div class="chat-card-source-text">求一些西双版纳的特色美食</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  lottie.loadAnimation({
+    container: document.getElementById('loadingLottie'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'lottie/cloud.json'
+  });
+});
+</script>
+</body>
+</html>
