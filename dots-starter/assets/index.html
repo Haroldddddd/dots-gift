@@ -185,60 +185,28 @@
         </div>
       </div>
 
-      <!-- 画像卡（仅头像 + 主副标题） -->
-      <div class="persona-card hidden-block">
-        <div class="persona-header">
-          <div class="persona-avatar">👨‍💻</div>
-          <div>
-            <div class="persona-name">男朋友 · 程序员 + 健身爱好者</div>
-            <div class="persona-summary">日均编码 8 小时 · 每周 4 次力量训练</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 兴趣信号气泡 -->
-      <div class="msg-row msg-ai has-tail persona-insights-bubble hidden-block">
-        <div class="msg-ai-bubble">
-          <div class="persona-insights">
-            <div class="persona-insight">
-              <div class="persona-insight-icon">🎯</div>
-              <div class="persona-insight-text">
-                <b>兴趣爱好</b>日均 8h 编码<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">手部友好减压键盘</span>
-              </div>
-            </div>
-            <div class="persona-insight">
-              <div class="persona-insight-icon">💪</div>
-              <div class="persona-insight-text">
-                <b>生活习惯</b>每周 4 次健身房<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">运动恢复装备对味</span>
-              </div>
-            </div>
-            <div class="persona-insight">
-              <div class="persona-insight-icon">🎨</div>
-              <div class="persona-insight-text">
-                <b>审美偏好</b>偏爱黑灰极简<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">冷调机能美学路线</span>
-              </div>
-            </div>
-            <div class="persona-insight">
-              <div class="persona-insight-icon">💎</div>
-              <div class="persona-insight-text">
-                <b>消费偏好</b>认准品质大牌<span class="persona-insight-arrow"> ➡️ </span><span class="persona-insight-suggest">专业旗舰系列优选</span>
-              </div>
-            </div>
-          </div>
+      <!-- 画像 + 兴趣信号合并气泡（气泡内标准 markdown 渲染）-->
+      <div class="msg-row msg-ai has-tail persona-card hidden-block">
+        <div class="msg-ai-bubble md-bubble">
+          <h4>男朋友 · 程序员 + 健身爱好者</h4>
+          <p>日均编码 8 小时 · 每周 4 次力量训练。</p>
+          <ul>
+            <li>🎯 <strong>兴趣爱好</strong>：日均 8h 编码 → <em>手部友好减压键盘</em></li>
+            <li>💪 <strong>生活习惯</strong>：每周 4 次健身房 → <em>运动恢复装备对味</em></li>
+            <li>🎨 <strong>审美偏好</strong>：偏爱黑灰极简 → <em>冷调机能美学路线</em></li>
+            <li>💎 <strong>消费偏好</strong>：认准品质大牌 → <em>专业旗舰系列优选</em></li>
+          </ul>
           <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
         </div>
       </div>
 
-      <!-- 礼物介绍气泡 -->
+      <div class="persona-insights-bubble hidden-block" hidden></div>
+
+      <!-- 礼物介绍气泡（5 张商品卡内嵌进同一气泡）-->
       <div class="msg-row msg-ai has-tail gift-intro-bubble hidden-block">
-        <div class="msg-ai-bubble">
-          这 5 件，每件都和 TA 主页里的某个细节呼应。
-          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
-        </div>
-      </div>
-
-      <!-- 5 礼物卡（标准 .content-card 商品卡，点击拉起浮层）-->
-      <div class="gift-list hidden-block">
+        <div class="msg-ai-bubble gift-bubble">
+          <p class="gift-bubble-text">这 5 件，每件都和 TA 主页里的某个细节呼应。</p>
+          <div class="gift-list">
 
         <div class="content-card gift-card" data-gift-id="1" role="button" tabindex="0">
           <div class="content-card-body">
@@ -355,109 +323,11 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- 引导气泡 -->
-      <div class="msg-row msg-ai has-tail followup-line hidden-block">
-        <div class="msg-ai-bubble">
-          挑出心动的那件了吗？或者犹豫不决，去问问大家？
+          </div>
           <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
         </div>
       </div>
 
-      <!-- 联想问题 -->
-      <div class="followup-keywords keyword-list hidden-block">
-        <div class="kw-item" data-action="plan">
-          <span class="kw-text">选好了，给我一个完整送礼方案</span>
-          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
-        </div>
-        <div class="kw-item" data-action="askcommunity">
-          <span class="kw-text">还是拿不准，在社区里问问大家的意见</span>
-          <span class="kw-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ═══════════════ 阶段 5：完整送礼方案 ═══════════════ -->
-    <div class="stage" data-stage="5">
-      <!-- 用户气泡由 JS 注入：「就选这把 Keychron Q1 Pro」 -->
-
-      <!-- 方案以 AI 气泡形式输出：标准对话气泡 + 内部富文本 -->
-      <div class="msg-row msg-ai has-tail plan-bubble hidden-block">
-        <div class="msg-ai-bubble plan-bubble-body">
-          <p class="plan-bubble-lead">收到！送一把好键盘，要送得有故事感。我把整套流程帮你理好了：</p>
-
-          <h2>🎁 完整送礼方案</h2>
-          <p><strong>主礼物 · Keychron Q1 Pro 75% 茶轴</strong></p>
-          <hr>
-
-          <h3>🎀 礼物组合</h3>
-          <ul>
-            <li><strong>主礼</strong>：Keychron Q1 Pro 75% 茶轴 — ¥1,499</li>
-            <li><strong>配件</strong>：无印良品 木质护腕垫 — ¥99</li>
-            <li><strong>趣味</strong>：瑞幸美式 + 手写小卡 — ¥18</li>
-          </ul>
-          <blockquote>合计 ¥1,616，压在 ¥1000-2000 预算的高峰体验区。</blockquote>
-
-          <h3>📦 包装建议</h3>
-          <p>Keychron 原盒已经足够克制好看，外面套一层 <strong>纯白哑光礼盒 + 黑色细丝带</strong> 就够了。卡片用 <strong>哑光黑卡纸 + 银墨</strong>，呼应 TA「冷调机能美学」的审美。</p>
-          <ul>
-            <li>✓ 极简黑白基调</li>
-            <li>✓ 原箱 + 外层礼盒（双层惊喜）</li>
-            <li>✗ 爱心 / 卡通包装、大红色蝴蝶结</li>
-          </ul>
-
-          <h3>💌 贺卡文案</h3>
-          <blockquote>送你一把不会让手腕喊累的键盘——<br>往后写代码的每个深夜，<br>都希望你听见的，是它脆而稳的回响。</blockquote>
-          <p><em>42 字，呼应 TA 在《工位 setup》里说过的"打 8 小时手腕酸"。</em></p>
-
-          <h3>🛒 下单渠道</h3>
-          <ul>
-            <li><strong>主礼物</strong>：Keychron 京东自营旗舰店 · 次日达</li>
-            <li><strong>下单备注</strong>：勾选「礼品包装」+「匿名配送」</li>
-            <li><strong>配套</strong>：无印良品天猫店 · 美式当日瑞幸下单</li>
-          </ul>
-          <p>京东自营走顺丰，正品和时效双保险；匿名配送避免快递短信提前剧透。</p>
-
-          <h3>⏰ 送出时机</h3>
-          <ol>
-            <li><strong>D-3</strong> · 京东下单，约定 D-1 送达自己住处</li>
-            <li><strong>D-1</strong> · 收件 + 拆原箱 + 二次包装 + 写贺卡</li>
-            <li><strong>D-Day</strong> · 早 8:30 当面送出（晨光 + 仪式感最强）；异地则提前 1 天寄到 TA 闺蜜处代收</li>
-          </ol>
-
-          <h3>⚠️ 避雷提醒</h3>
-          <ul>
-            <li>不要选 <strong>红轴</strong> — TA 评论区明确说想要"段落感"，红轴回弹偏轻会失望</li>
-            <li>不要选 <strong>透明清水轴款</strong>，跟 TA 极简黑灰审美强冲突</li>
-            <li>贺卡 <strong>不要写"加油打工人"梗</strong> — TA 朋友圈调侃过这种话有 PUA 感</li>
-          </ul>
-
-          <h3>🔄 备选方案</h3>
-          <ul>
-            <li><strong>缺货时</strong>：改送 Lululemon ABC 长裤（推荐 #3），同价位、命中"通勤舒服"痛点</li>
-            <li><strong>想加码</strong>：+ Theragun Mini（推荐 #2），组成「工作 + 恢复」双场景，总价到 ¥2,789</li>
-            <li><strong>想低调</strong>：改送 AirPods Pro 2（推荐 #4），¥1,899 单品，包装轻巧</li>
-          </ul>
-
-          <h3>💭 TA 可能的反应</h3>
-          <p><strong>"哇这个我攒了好久想入！"</strong><br>高概率反应。当晚就会拆开试敲，接下来一周朋友圈晒工位。</p>
-          <p><strong>"太贵了你下次别破费"</strong><br>实在话不是客套。可以借机说"看你以后写出更牛的代码就值"。</p>
-          <p><strong>"配列我没用过会不会不习惯"</strong><br>小概率。提前补一句"键帽轴体都能换，先用一周看手感"。</p>
-
-          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
-        </div>
-      </div>
-
-      <!-- 收下经验包引导气泡 -->
-      <div class="msg-row msg-ai has-tail plan-claim-bubble hidden-block">
-        <div class="msg-ai-bubble plan-claim-body">
-          <p class="plan-claim-text">看完有啥不清楚的随时问小姨~ 收下这条经验包，下次随时回来，不怕找不到</p>
-          <button class="btn-claim-skill">收下经验包</button>
-          <img class="bubble-tail" src="img/tail-left.png" alt="" draggable="false">
-        </div>
-      </div>
     </div>
 
   </div>
@@ -574,13 +444,14 @@
       </button>
       <div class="gift-detail-scroll">
         <div class="gift-detail-hero">
-          <div class="gift-detail-thumb" id="gd-thumb"></div>
           <div class="gift-detail-meta">
             <div class="gift-detail-title" id="gd-title"></div>
             <div class="gift-detail-price" id="gd-price"></div>
             <div class="gift-detail-channel" id="gd-channel"></div>
           </div>
         </div>
+
+        <div class="gift-detail-gallery" id="gd-gallery"></div>
 
         <div class="gift-detail-section">
           <div class="gift-detail-section-title">推荐理由</div>
@@ -591,9 +462,11 @@
           <div class="gift-detail-section-title">用户口碑</div>
           <div class="gift-detail-quotes" id="gd-quotes"></div>
         </div>
-      </div>
-      <div class="gift-detail-cta-wrap">
-        <button class="btn btn-green btn-lg gift-detail-cta">就选这个</button>
+
+        <div class="gift-detail-section gift-detail-followups-section">
+          <div class="gift-detail-section-title">继续了解</div>
+          <div class="gift-detail-followups" id="gd-followups"></div>
+        </div>
       </div>
     </div>
   </div>

@@ -354,91 +354,41 @@
   color: #FFFFFF;
 }
 
-/* ========== 8. 画像卡（阶段 4）========== */
-.persona-card {
-  align-self: stretch;
-  width: 100%;
-  max-width: 406px;
-  background: rgba(255,255,255,.92);
-  border-radius: 28px;
-  border: .5px solid rgba(162,162,162,.18);
-  box-shadow: 0 4px 10px rgba(20,20,20,.04);
-  padding: 18px 20px;
-  margin-bottom: 12px;
-}
-.persona-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.persona-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2C2C2E 0%, #4A4A4C 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-  border: 1.5px solid #FFFFFF;
-  box-shadow: 0 2px 6px rgba(20,20,20,.08);
-}
-.persona-name {
+/* ========== 8. 气泡内 markdown 渲染（用于画像 / 兴趣信号合并气泡）========== */
+.md-bubble h1,
+.md-bubble h2,
+.md-bubble h3,
+.md-bubble h4 {
+  margin: 0 0 6px;
   font-size: 16px;
   font-weight: 600;
   color: var(--title);
-  margin-bottom: 2px;
   letter-spacing: 0.02em;
+  line-height: 1.4;
 }
-.persona-summary {
-  font-size: 13px;
-  color: var(--description);
-  line-height: 1.5;
+.md-bubble p {
+  margin: 0 0 10px;
+  color: var(--paragraph);
+  line-height: 1.65;
   letter-spacing: 0.04em;
 }
-
-/* —— 兴趣信号（嵌在 AI 气泡里）—— */
-.persona-insights {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.persona-insight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-}
-.persona-insight-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(111,210,189,.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 14px;
-}
-.persona-insight-text {
-  flex: 1;
+.md-bubble p:last-child { margin-bottom: 0; }
+.md-bubble ul,
+.md-bubble ol {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
   color: var(--paragraph);
-  line-height: 1.5;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
 }
-.persona-insight-text b {
-  color: var(--title);
-  font-weight: 600;
-  margin-right: 2px;
-}
-.persona-insight-arrow {
+.md-bubble li { margin-bottom: 4px; }
+.md-bubble li:last-child { margin-bottom: 0; }
+.md-bubble strong { color: var(--title); font-weight: 600; }
+.md-bubble em {
   color: var(--info5);
-  font-weight: 600;
-  margin: 0 4px;
-}
-.persona-insight-suggest {
-  color: var(--description);
+  font-style: normal;
+  font-weight: 500;
 }
 
 /* ========== 9. 内容卡片基底（来自组件库 6.4 商品卡）========== */
@@ -515,66 +465,84 @@
 }
 .content-card-thumb svg { width: 100%; height: 100%; display: block; }
 
-/* ========== 9.0 礼物卡（阶段 4 · 大图变体）========== */
+/* ========== 9.0 礼物卡（阶段 4 · 内嵌进 AI 气泡 · 标准小图变体）========== */
+.gift-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 346px;
+  max-width: 100%;
+}
+.gift-bubble-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--paragraph);
+  letter-spacing: 0.02em;
+}
 .gift-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 8px;
   align-self: stretch;
 }
 .gift-list .content-card.gift-card {
   max-width: 100%;
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.6);
+  border: 0.5px solid rgba(20, 20, 20, 0.06);
+  box-shadow: none;
+  border-radius: 16px;
+  padding: 10px 30px 10px 10px;
   align-items: center;
-  padding: 14px 38px 14px 14px;
-  gap: 16px;
   cursor: pointer;
   position: relative;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: transform .15s ease, background-color .15s ease;
 }
 .gift-list .content-card.gift-card:active {
   transform: scale(.99);
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  background: rgba(255, 255, 255, 0.85);
 }
-/* 大图放左侧 */
 .gift-list .content-card.gift-card .content-card-thumb {
-  order: -1;
-  width: 124px;
-  height: 124px;
+  width: 44px;
+  height: 44px;
   margin-left: 0;
-  border-radius: 16px;
+  margin-right: 12px;
+  border-radius: 10px;
   background: #F5F5F7;
   position: relative;
+  order: -1;
 }
-/* 信息区放右侧，垂直居中 */
 .gift-list .content-card.gift-card .content-card-body {
   justify-content: center;
-  gap: 8px;
+  gap: 2px;
 }
 .gift-list .content-card.gift-card .content-card-title {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .gift-list .content-card.gift-card .content-card-desc {
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--description);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--desc-lighter);
   letter-spacing: 0.02em;
   -webkit-line-clamp: 2;
 }
-/* 大图变体里隐藏 source 行（信息聚焦于价格 + 推荐语） */
 .gift-list .content-card.gift-card .content-card-source { display: none; }
 
 /* 右侧 chevron */
 .gift-list .content-card.gift-card::after {
   content: '';
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 50%;
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-right: 1.5px solid rgba(20,20,20,.28);
   border-top: 1.5px solid rgba(20,20,20,.28);
   transform: translateY(-50%) rotate(45deg);
@@ -673,28 +641,38 @@
 
 .gift-detail-hero {
   display: flex;
-  gap: 16px;
-  padding: 8px 0 18px;
-  border-bottom: 0.5px solid rgba(20,20,20,.06);
-  margin-bottom: 18px;
+  flex-direction: column;
+  padding: 4px 0 14px;
+  margin-bottom: 14px;
 }
-.gift-detail-thumb {
-  width: 96px;
-  height: 96px;
-  border-radius: 16px;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: #F5F5F7;
-}
-.gift-detail-thumb svg { width: 100%; height: 100%; display: block; }
 .gift-detail-meta {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 6px;
 }
+
+/* 横划商品图廊（沿用 .gift-detail-scroll 的 22px 页边距，与浮层其他模块对齐）*/
+.gift-detail-gallery {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  margin: 0 0 20px;
+  padding: 0 0 4px;
+  scrollbar-width: none;
+}
+.gift-detail-gallery::-webkit-scrollbar { display: none; }
+.gift-detail-gallery-item {
+  flex: 0 0 auto;
+  width: 240px;
+  height: 280px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #F5F5F7;
+  scroll-snap-align: start;
+}
+.gift-detail-gallery-item svg { width: 100%; height: 100%; display: block; }
 .gift-detail-title {
   font-size: 17px;
   font-weight: 600;
@@ -750,15 +728,39 @@
   letter-spacing: 0.04em;
 }
 
-.gift-detail-cta-wrap {
-  padding: 12px 22px calc(env(safe-area-inset-bottom, 0) + 16px);
-  background: #FFFFFF;
-  border-top: 0.5px solid rgba(20,20,20,.06);
+/* 继续了解：联想问题 chip 列表 */
+.gift-detail-followups-section { margin-bottom: 8px; }
+.gift-detail-followups {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gift-detail-followup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 0.5px solid rgba(20,20,20,.06);
+  font-size: 14px;
+  color: rgba(20,20,20,.72);
+  text-align: left;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: opacity .2s;
+}
+.gift-detail-followup:last-child { border-bottom: 0; }
+.gift-detail-followup:active { opacity: .5; }
+.gift-detail-followup-arrow {
   flex-shrink: 0;
+  color: rgba(20,20,20,.32);
+  display: flex;
 }
-.gift-detail-cta {
-  width: 100%;
-}
+.gift-detail-followup-arrow svg { width: 14px; height: 14px; }
 
 /* ========== 引导句区块（已改为 AI 气泡承载，无需额外样式） ========== */
 
@@ -1062,14 +1064,14 @@
 }
 .xhs-publish:active { opacity: .85; }
 
-/* ========== 收下经验包气泡（阶段 5）========== */
-.plan-claim-bubble .plan-claim-body {
+/* ========== 收下经验包气泡（含内嵌 CTA） ========== */
+.claim-skill-bubble {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   padding: 16px 18px;
 }
-.plan-claim-text {
+.claim-skill-text {
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
@@ -1077,24 +1079,50 @@
   letter-spacing: 0.02em;
 }
 .btn-claim-skill {
-  appearance: none;
-  border: 0;
   width: 100%;
-  height: 44px;
-  border-radius: 22px;
+  height: 48px;
+  border-radius: 24px;
   background: var(--info5);
   color: #FFFFFF;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
   cursor: pointer;
-  transition: opacity .15s ease;
+  transition: all .15s ease;
 }
-.btn-claim-skill:active { opacity: .85; }
+.btn-claim-skill:active { transform: scale(.98); opacity: .85; }
 .btn-claim-skill.claimed {
   background: rgba(111,210,189,.25);
   color: #2A8E74;
   cursor: default;
+}
+.btn-claim-skill.claimed:active { transform: none; opacity: 1; }
+
+/* ========== 商品采购卡（继续了解 - 购买地址回复）
+   规范：复用 6.4 商品卡 .content-card（44px 缩略图），嵌入 AI 气泡内 ========== */
+.purchase-card-row .msg-ai-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.content-card.purchase-content-card {
+  width: 100%;
+  max-width: none;
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+.content-card.purchase-content-card:active { transform: scale(.99); }
+.content-card.purchase-content-card .purchase-price {
+  font-weight: 600;
+  color: var(--title);
+}
+.content-card.purchase-content-card .purchase-xhs-icon {
+  background: #FF2442;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 /* ========== Toast ========== */
